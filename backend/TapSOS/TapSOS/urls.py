@@ -1,3 +1,6 @@
+from django.urls import path
+from TapSOS.views import UserView, EmergencyCardView
+
 """
 URL configuration for TapSOS project.
 
@@ -19,4 +22,8 @@ from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('user/<int:user_id>/', UserView.as_view()),
+    path('user/', UserView.as_view()),
+    path('emergency-card/<int:card_id>/', EmergencyCardView.as_view()),
+    path('emergency-card/', EmergencyCardView.as_view()),
 ]
