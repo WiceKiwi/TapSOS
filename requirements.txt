@@ -1,1 +1,2 @@
+# SQLite3 version 3.37.2
 Django==5.1
