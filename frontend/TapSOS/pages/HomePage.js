@@ -1,77 +1,168 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, ScrollView  } from 'react-native';
+import * as Font from 'expo-font';
 
-const PersonalInformation = () => {
+const PersonalInformation = ({userInfo}) => {
     return(
-        <ScrollView contentContainerStyle={styles.container}>
-        {/* Personal Information Section */}
         <View style={styles.section}>
             <Text style={styles.header}>Personal Information</Text>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Name: </Text>
-                <Text style={styles.value}>John Doe</Text>
-                <Text style={styles.label}>Age: </Text>
-                <Text style={styles.value}>18</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Address: </Text>
-                <Text style={styles.value}>123 School Street</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Sex: </Text>
-                <Text style={styles.value}>M</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Medical Condition: </Text>
-                <Text style={styles.value}>Mutism</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Allergies: </Text>
-                <Text style={styles.value}>Penicillin, Peanuts</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Blood Type: </Text>
-                <Text style={styles.value}>A-</Text>
-            </View>
-        </View>
-
-        {/* Custom Cards Section */}
-        <View style={styles.section}>
-            <Text style={styles.header}>Custom Cards</Text>
-            <View style={styles.cardRow}>
-            <View style={[styles.card, { backgroundColor: '#FF6B6B' }]}>
-                <Text style={styles.cardText}>Penicillin Allergic Reaction</Text>
-            </View>
-            <View style={[styles.card, { backgroundColor: '#FF6B6B' }]}>
-                <Text style={styles.cardText}>Peanuts Allergic Reaction</Text>
-            </View>
-            <View style={[styles.card, { backgroundColor: '#FFB6B9' }]}>
-                <Text style={styles.cardText}>Help finding wallet</Text>
-            </View>
-            </View>
-        </View>
-
-        {/* Emergency Section */}
-        <View style={styles.section}>
-            <Text style={styles.header}>Emergency</Text>
-            <View style={styles.cardRow}>
-            <View style={[styles.card, { backgroundColor: '#FF6B6B' }]}>
-                <Text style={styles.cardText}>Medical Emergency</Text>
-                {/* Add an icon here if needed */}
-            </View>
-            <View style={[styles.card, { backgroundColor: '#6BCBFF' }]}>
-                <Text style={styles.cardText}>Physical Danger</Text>
-                {/* Add an icon here if needed */}
-            </View>
+            <View>
+                <View style={styles.infoRow}>
+                    <View style={styles.info}>
+                        <Text style={styles.label}>Name: </Text>
+                        <Text style={styles.value}>{userInfo.name}</Text>
+                    </View>
+                    <View style={styles.info}>
+                        <Text style={styles.label}>Age: </Text>
+                        <Text style={styles.value}>{userInfo.age}</Text>
+                    </View>
+                </View>
+                <View style={styles.infoRow}>
+                    <View style={styles.info}>
+                        <Text style={styles.label}>Address: </Text>
+                        <Text style={styles.value}>{userInfo.address}</Text>
+                    </View>
+                    <View style={styles.info}>
+                        <Text style={styles.label}>Sex: </Text>
+                        <Text style={styles.value}>{userInfo.sex}</Text>
+                    </View>
+                </View>
+                <View style={styles.infoRow}>
+                    <View style={styles.info}>
+                        <Text style={styles.label}>DOB: </Text>
+                        <Text style={styles.value}>{userInfo.dob}</Text>
+                    </View>
+                    <View style={styles.info}>
+                        <Text style={styles.label}>Blood Type: </Text>
+                        <Text style={styles.value}>{userInfo.bloodType}</Text>
+                    </View>
+                </View>  
+                <View style={styles.info}>
+                    <Text style={styles.label}>Medical Condition: </Text>
+                    <Text style={styles.value}>{userInfo.medicalConditions}</Text>
+                </View>
+                <View style={styles.info}>
+                    <Text style={styles.label}>Allergies: </Text>
+                    <Text style={styles.value}>{userInfo.allergies}</Text>
+                </View>
+                
+                <View style={styles.info}>
+                    <Text style={styles.label}>Emergency Contact: </Text>
+                    <Text style={styles.value}>+65 {userInfo.emergencyContact.number}</Text>
+                </View>
             </View>
         </View>
-    </ScrollView>
     )
 }
 
+const CustomCard = ({customCards}) => {
+    return (
+        <View style={styles.section}>
+            <View style={styles.infoRow}>
+                <Text style={styles.header}>Custom Cards</Text>
+                <Text style={styles.clickable}>Create New Card</Text>
+            </View>
+            
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.cardRow}
+            >
+                {customCards.map((card) => (
+                <View key={card.id} style={[styles.card, { backgroundColor: `${card.backgroundColor}` }]}>
+                    <Text style={styles.cardText}>{card.title}</Text>
+                </View>
+                ))}
+            </ScrollView>
+                
+        </View>
+    )
+    
+}
+
+const EmergencyCard = ({emergencyCards}) => {
+    
+    return (
+        <View style={styles.section}>
+            <View style={styles.infoRow}>
+                <Text style={styles.header}>Emergency</Text>
+                {/* <Text style={styles.clickable}>Create New Card</Text> */}
+            </View>
+            
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.cardRow}
+            >
+                {emergencyCards.map((card) => (
+                <View key={card.id} style={[styles.card, { backgroundColor: `${card.backgroundColor}` }]}>
+                    <Text style={styles.cardText}>{card.title}</Text>
+                </View>
+                ))}
+            </ScrollView>
+                
+        </View>
+    )
+    
+}
+
 export default function HomePage() {
+    const [fontsLoaded, setFontsLoaded] = useState(false);
+
+    // Load the custom fonts
+    useEffect(() => {
+        async function loadFonts() {
+        await Font.loadAsync({
+            'Inter': require('../assets/Inter-VariableFont_opsz,wght.ttf'),
+            'Inter-bold': require('../assets/Inter_24pt-Bold.ttf'),
+        });
+        setFontsLoaded(true); // Set fontsLoaded to true once fonts are loaded
+        }
+
+        loadFonts();
+    }, []);
+
+    // Render nothing until the fonts are loaded
+    if (!fontsLoaded) {
+        return null; // Alternatively, you can return a simple loading view here
+    }
+
+    const userInfo = {
+        name:"John Doe",
+        address:"123 School Street",
+        age: 18,
+        dob: "17/08/1945",
+        sex: "M",
+        medicalConditions: ["Mutism"],
+        allergies: ["Penicillin, Peanuts"],
+        bloodType: "A-",
+        emergencyContact: {
+            number: 81234567,
+            name: "Dohn Joe"
+        }
+    }
+
+    const customCards = [
+        { id: 1, title: 'Penicillin Allergic Reaction', backgroundColor: '#F89797' },
+        { id: 2, title: 'Peanuts Allergic Reaction', backgroundColor: '#FBCFCF' },
+        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA'  },
+
+      ];
+
+    const emergencyCards = [
+        { id: 1, title: 'Medical Emergency', backgroundColor: '#FF6B6B'},
+        { id: 2, title: 'Physical Danger', backgroundColor: '#CADAFF' },
+        { id: 3, title: 'Fire Emergency', backgroundColor: '#FFF076'  },
+
+      ];
+
     return(
-        <PersonalInformation></PersonalInformation>
+        <ScrollView contentContainerStyle={styles.container}>
+            <PersonalInformation userInfo={userInfo}></PersonalInformation>
+            <CustomCard customCards={customCards}></CustomCard>
+            <EmergencyCard emergencyCards={emergencyCards}></EmergencyCard>
+        </ScrollView>
+        
     )
 
 }
@@ -86,45 +177,65 @@ const styles = StyleSheet.create({
     //   backgroundColor: '#FEE2E2', // Background similar to the gradient
     },
     section: {
-        marginBottom: 20,
+        marginBottom: 30,
+
     },
     header: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 10,
-    },
-    infoRow: {
-      flexDirection: 'row',
+      fontSize: 22,
+      fontFamily: 'Inter-bold',
       marginBottom: 5,
     },
-    value: {
-      fontSize: 16,
-      fontWeight: '600',
+
+    info: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
-    label: {
-      fontSize: 16,
-      fontWeight: '400',
-      color: 'black',
-    },
-    spacer: {
-      marginLeft: 20,
-    },
-    cardRow: {
+
+    infoRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    
+    value: {
+      fontSize: 16,
+      fontFamily: 'Inter-bold',
+    },
+
+    label: {
+      fontSize: 16,
+      fontFamily: 'Inter',
+    },
+
+    clickable: {
+        fontSize: 14,
+        fontFamily: 'Inter',
+        textDecorationLine: 'underline',
+    },
+  
+
+    cardRow: {
+      flexDirection: 'row',
       marginBottom: 10,
     },
+
     card: {
       flex: 1,
       padding: 15,
       marginRight: 10,
-      borderRadius: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'left',
+      alignItems: 'baseline',
+      height: 150,
+      width: 150,
+      backgroundColor: '#F89797',
+      borderRadius: 15,
     },
+    
     cardText: {
-      color: 'black',
-      fontWeight: '600',
-      textAlign: 'center',
+        fontSize: 16,
+        textAlign: 'left',
+        fontFamily: 'Inter-bold',
+        marginBottom: 10,
+        marginRight: 0,
     },
   });
