@@ -4,6 +4,10 @@ import { SafeAreaView, Image } from "react-native";
 
 import NaviBar from "./components/NaviBar";
 import { View } from "react-native";
+import DisplayText from "./pages/DisplayText";
+import ProfilePage from "./pages/ProfilePage";
+import HomePage from "./pages/HomePage";
+import CategoriesPage from "./pages/CategoriesPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +18,7 @@ const App = () => {
           screenOptions={{
             headerTitleAlign: 'center',
             headerTitle: () => (
-              <View style={{ width: 120, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ width: 120, height: 40, justifyContent: 'center', alignItems: 'center' }}>
                 <Image 
                   source={require('./assets/LogoFix.png')} 
                   style={{ width: '100%', height: '100%' }} 
@@ -41,8 +45,20 @@ const App = () => {
           component={NaviBar}
         />
         <Stack.Screen
-            name="Generated"
-            component={NaviBar}
+            name="Display"
+            component={DisplayText}
+        />
+        <Stack.Screen
+            name="Profile"
+            component={ProfilePage}
+        />
+        <Stack.Screen
+            name="Home"
+            component={HomePage}
+        />
+        <Stack.Screen
+            name="Category"
+            component={CategoriesPage}
         />
         </Stack.Navigator>
       </NavigationContainer>

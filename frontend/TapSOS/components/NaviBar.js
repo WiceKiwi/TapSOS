@@ -3,6 +3,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import HomePage from "../pages/HomePage";
 import NewCard from '../pages/NewCard';
 import DisplayText from '../pages/DisplayText';
+import ProfilePage from '../pages/ProfilePage';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,7 +37,7 @@ export default function NaviBar() {
         }}/>
         <Tab.Screen
         name="Profile"
-        component={DisplayText}
+        component={ProfilePage}
         options={{
             tabBarIcon: ({color, size }) => (
                 <Ionicons name="add-circle" size={size} color={color} />

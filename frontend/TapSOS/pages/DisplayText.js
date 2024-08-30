@@ -1,11 +1,49 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Touchable, Button  } from 'react-native';
 import * as Font from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 
 
-export default function DisplayText() {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+const SGLanguages = [
+    {
+        display: "English",
+        name: "English"
+    },
+    {
+        display: "中文",
+        name: "Chinese (Simplified)"
+    },
+    {
+        display: "Bahasa Melayu",
+        name: "Malay"
+    },
+    {
+        display: "தமிழ்",
+        name: "Tamil"
+    },
+]
+
+const TranslateButton = ({language}) => {
+    return (
+        <TouchableOpacity style={styles.translateButton}>
+            <Text>{language.display}</Text>
+        </TouchableOpacity>
+    )
+}
+
+
+export default function DisplayText({route, navigation}) {
+    const { cardData } = route.params;
+    useEffect(() => {
+        // Lock the orientation to landscape when this screen is mounted
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    
+        // Reset orientation to portrait when leaving this screen
+        return () => {
+          ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+        };
+      }, []);
+      
     const [fontsLoaded, setFontsLoaded] = useState(false);
 
     // Load the custom fonts
@@ -36,7 +74,12 @@ export default function DisplayText() {
     return(
             <ScrollView contentContainerStyle={styles.container}>
 
-            <Text style={styles.textBig}>I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PEANUTS. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE.</Text>
+                <Text style={styles.textBig}>{cardData.text}</Text>
+                <View style={styles.cardRow}>
+                    {SGLanguages.map((language)=> (
+                        <TranslateButton language={language} ></TranslateButton>
+                    ))}
+                </View>
             </ScrollView>
         
         
@@ -47,7 +90,7 @@ export default function DisplayText() {
 const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
-      padding: 20,
+      paddingHorizontal: 20,
       backgroundColor: 'white', // Background similar to the gradient
     },
 
@@ -56,10 +99,19 @@ const styles = StyleSheet.create({
 
     },
 
+    translateButton: {
+        backgroundColor: '#1111',
+        padding: 10,
+        borderRadius: 15,
+        textAlign: 'center',
+        marginRight: 10,
+    },
+
     textBig: {
       fontSize: 36,
       fontFamily: 'Inter-bold',
-      marginBottom: 5,
+      marginBottom: 10,
+      textAlign: 'center',
     },
 
     textBoxShort: {
@@ -115,24 +167,6 @@ const styles = StyleSheet.create({
     cardRow: {
       flexDirection: 'row',
       marginBottom: 10,
-    },
-
-    card: {
-      flex: 1,
-      padding: 15,
-      marginRight: 10,
-      justifyContent: 'left',
-      alignItems: 'baseline',
-      height: 150,
-      width: 150,
-      borderRadius: 15,
-    },
-    
-    cardText: {
-        fontSize: 16,
-        textAlign: 'left',
-        fontFamily: 'Inter-bold',
-        marginBottom: 10,
-        marginRight: 0,
+      marginLeft: 20,
     },
   });

@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from
 import * as Font from 'expo-font';
 import Card from '../components/Card';
 
+
 const CustomCard = ({customCards}) => {
     return (
         <View style={styles.section}>
@@ -34,7 +35,7 @@ const Flag = ({status}) => {
     )
 }
 
-export default function NewCard({navigation}) {
+export default function EditCard({navigation}) {
     const [fontsLoaded, setFontsLoaded] = useState(false);
     
     const [newTitle, setNewTitle] = useState("");
@@ -108,7 +109,7 @@ export default function NewCard({navigation}) {
                 
             </View>
             
-            {/* <CustomCard customCards={customCards}></CustomCard> */}
+            <CustomCard customCards={customCards}></CustomCard>
         </ScrollView>
         
     )
