@@ -4,6 +4,8 @@ import * as Font from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import Card from '../components/Card';
 import { useNavigation } from '@react-navigation/native';
+import CategoriesPage from './CategoriesPage';
+import ParentCategoryCard from '../components/ParentCategoryCard';
 
 
 const CustomCard = ({customCards}) => {
@@ -37,7 +39,7 @@ const EmergencyCard = ({emergencyCards}) => {
             
             <View style={styles.cardRow}>
                 {emergencyCards.map((card) => (
-                <Card card={card}></Card>
+                <ParentCategoryCard card={card}></ParentCategoryCard>
                 ))}
             </View>
                 
@@ -87,13 +89,13 @@ export default function HomePage({navigation}) {
     const customCards = [
         { id: 1, title: 'Penicillin Allergic Reaction', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE." },
         { id: 2, title: 'Peanuts Allergic Reaction', backgroundColor: '#FBCFCF', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PEANUTS. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE." },
-        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA', text:"I AM MUTE. I LOST MY WALLET. CAN YOU HELP ME FIND IT?"  },
+        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA', text:"I AM MUTE. I AM MEWING RIGHT NOW. HELP!! CALL 999! CALL 995!"  },
 
       ];
 
     const emergencyCards = [
-        { id: 1, title: 'Medical Emergency', backgroundColor: '#FF6B6B'},
-        { id: 2, title: 'Physical Danger', backgroundColor: '#CADAFF' },
+        { id: 1, title: 'Medical Emergency', backgroundColor: '#FF6B6B', categories: [ {id: 1, title: 'Heart Attack', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}, {id: 2, title: 'Asthma', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}]},
+        { id: 2, title: 'Physical Danger', backgroundColor: '#CADAFF', categories: [{id: 1, title: 'Physical Assault', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}, {id: 2, title: 'Sexual Assault', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}]},
         { id: 3, title: 'Fire Emergency', backgroundColor: '#FFF076'  },
 
       ];

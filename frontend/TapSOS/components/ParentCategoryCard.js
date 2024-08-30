@@ -4,7 +4,7 @@ import * as Font from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
 
 
-export default function Card({card}){
+export default function ParentCategoryCard({card}){
     const navigation = useNavigation();
     const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -27,7 +27,7 @@ export default function Card({card}){
     }
 
     return(
-        <TouchableOpacity key={card.id} style={[styles.card, { backgroundColor: `${card.backgroundColor}` }]} onPress={() => navigation.navigate('Display', { cardData: card })}>
+        <TouchableOpacity key={card.id} style={[styles.card, { backgroundColor: `${card.backgroundColor}` }]} onPress={() => navigation.navigate('Category', { cardData: card })}>
             <Text style={styles.cardText}>{card.title}</Text>
         </TouchableOpacity>
     )
