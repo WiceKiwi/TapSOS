@@ -10,4 +10,4 @@ class EmergencyCard(models.Model):
 
 
     def __str__(self):
-        return f"{self.title} ({self.get_source_display()})"
+        return f"{self.title}"

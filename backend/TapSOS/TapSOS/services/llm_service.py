@@ -1,6 +1,7 @@
 # move somewhere later
 import sys
 import os
+import json
 
 project_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(project_dir)
@@ -27,7 +28,10 @@ class LLMService:
     Based on the context, specify the appropriate emergency number in Singapore.
         '''
 
-        input_text = " ".join(input_data)
+        if isinstance(input_data, dict):
+            input_text = json.dumps(input_data)
+        else:
+            input_text = str(input_data)
 
         response = self.client.chat.completions.create(
             model='gpt-4o',
@@ -38,6 +42,5 @@ class LLMService:
         )
 
         generated_card = response.choices[0].message.content
-
         # print(generated_card)
         return generated_card

@@ -7,10 +7,12 @@ from TapSOS.models.User import User
 from TapSOS.models.EmergencyCard import EmergencyCard
 from TapSOS.services.emergency_card_service import EmergencyCardService
 from TapSOS.services.llm_service import LLMService
+from config.env import OPENAI_API_KEY
 
 class UserView(APIView):
 
     def post(self, request):
+        
         """
         POST request to register a new user.
         1. Validate input data using the serializer.
@@ -26,9 +28,9 @@ class UserView(APIView):
             serializer.save()  # This calls the create() method of the serializer
             
             # TODO: LLMService.generate_response(request.data)
-            response = LLMService.generate_card(request.data)
-            
-            EmergencyCardService.create_emergency_card(response)
+            llm_service = LLMService(OPENAI_API_KEY)
+            response = llm_service.generate_card(input_data=request.data)
+            EmergencyCardService.create_emergency_card_with_user(response)
 
             # Step 4: Return Response
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -150,10 +152,12 @@ class AIEmergencyCardView(APIView):
     Handles the creation of an emergency card based on an AI-generated response.
     """
 
-    def get(self, request):
+    def get(self, request, emergency):
         # Get the JSON string response from the AI model
-        response_json = LLMService.generate_card(request)
+        llm_service = LLMService(OPENAI_API_KEY)
         
+        response_json = llm_service.generate_card("emergency: " + str(emergency))
+
         # Create an emergency card using the service
         card = EmergencyCardService.create_emergency_card_with_keyword(response_json)
         

@@ -1,19 +1,15 @@
 from TapSOS.models.EmergencyCard import EmergencyCard
 import json
 from django.http import JsonResponse
-from django.views import View
 
 class EmergencyCardService:
     @staticmethod
     def create_emergency_card_with_user(response):
-
-        cards_json = response.decode('utf-8')  # Assuming the JSON string is in the request body
-        
         try:
             # Convert the JSON string into a list of dictionaries
-            cards_data = json.loads(cards_json)
+            cards_data = json.loads(response)
             
-            # Loop through each card and save it to the database
+
             for card_data in cards_data:
                 EmergencyCard.objects.create(
                     title=card_data['title'],
@@ -27,9 +23,7 @@ class EmergencyCardService:
         
         except KeyError:
             return JsonResponse({"status": "error", "message": "Missing required fields in JSON."}, status=400)
-        
-    
-class EmergencyCardService:
+
     @staticmethod
     def create_emergency_card_with_keyword(response_json):
         try:
@@ -44,7 +38,7 @@ class EmergencyCardService:
                 raise ValueError("The response from the AI model is missing 'title' or 'content'.")
 
             # Create a new EmergencyCard with the AI-generated content
-            card = EmergencyCard.objects.create(
+            card = EmergencyCard(
                 title=title,
                 content=content
             )
