@@ -6,6 +6,7 @@ from TapSOS.serializers import UserSerializer, EmergencyCardSerializer  # Import
 from TapSOS.models.User import User
 from TapSOS.models.EmergencyCard import EmergencyCard
 from TapSOS.services.emergency_card_service import EmergencyCardService
+from backend.TapSOS.TapSOS.services.llm_service import LLMService
 
 class UserView(APIView):
 
@@ -24,7 +25,8 @@ class UserView(APIView):
             # Data is valid, proceed to save the user
             serializer.save()  # This calls the create() method of the serializer
             
-            response = # TODO: LLMService.generate_response(request.data)
+            # TODO: LLMService.generate_response(request.data)
+            response = LLMService.generate_card(request.data)
             
             EmergencyCardService.create_emergency_card(response)
 
@@ -150,7 +152,7 @@ class AIEmergencyCardView(APIView):
 
     def get(self, request):
         # Get the JSON string response from the AI model
-        response_json = LLMService.get_response(request)
+        response_json = LLMService.generate_card(request)
         
         # Create an emergency card using the service
         card = EmergencyCardService.create_emergency_card_with_keyword(response_json)
