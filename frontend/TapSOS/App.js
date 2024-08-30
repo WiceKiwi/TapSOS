@@ -8,6 +8,10 @@ import DisplayText from "./pages/DisplayText";
 import ProfilePage from "./pages/ProfilePage";
 import HomePage from "./pages/HomePage";
 import CategoriesPage from "./pages/CategoriesPage";
+import NewUserPage from "./pages/LandingPage";
+import LandingPage from "./pages/LandingPage";
+import SignUpPage from "./pages/SignUpPage";
+import AccountCreation from "./pages/AccountCreationPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,10 +59,26 @@ const App = () => {
         <Stack.Screen
             name="Home"
             component={HomePage}
+            options={{ headerShown: true, navigationBarHidden: false}}
         />
         <Stack.Screen
             name="Category"
             component={CategoriesPage}
+        />
+        <Stack.Screen
+            name="Landing"
+            component={LandingPage}
+            options={{ headerShown: false}}
+        />
+        <Stack.Screen
+            name="SignUp"
+            component={SignUpPage}
+            options={{ headerShown: true}}
+        />
+        <Stack.Screen
+            name="AccountCreation"
+            component={AccountCreation}
+            options={{ headerShown: false}}
         />
         </Stack.Navigator>
       </NavigationContainer>

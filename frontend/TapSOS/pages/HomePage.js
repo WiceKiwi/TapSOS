@@ -104,6 +104,7 @@ export default function HomePage({navigation}) {
         <ScrollView contentContainerStyle={styles.container}>
             <EmergencyCard emergencyCards={emergencyCards}></EmergencyCard>
             <CustomCard customCards={customCards}></CustomCard>
+            <TouchableOpacity onPress={() => navigation.navigate('Landing')}><Text>LandingPage</Text></TouchableOpacity>
         </ScrollView>
         
     )
@@ -129,6 +130,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
 
     },
+    
     header: {
       fontSize: 22,
       fontFamily: 'Inter-bold',
