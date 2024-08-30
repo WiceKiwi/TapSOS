@@ -20,4 +20,4 @@ class AllergyAdmin(admin.ModelAdmin):
 @admin.register(EmergencyCard)
 class EmergencyCardAdmin(admin.ModelAdmin):
     # Display the 'id' and other relevant fields in the list view
-    list_display = ('id', 'title', 'source', 'created_at')
+    list_display = ('id', 'title', 'created_at')

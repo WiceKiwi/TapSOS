@@ -6,7 +6,7 @@ from TapSOS.serializers import UserSerializer, EmergencyCardSerializer  # Import
 from TapSOS.models.User import User
 from TapSOS.models.EmergencyCard import EmergencyCard
 from TapSOS.services.emergency_card_service import EmergencyCardService
-from backend.TapSOS.TapSOS.services.llm_service import LLMService
+from TapSOS.services.llm_service import LLMService
 
 class UserView(APIView):
 
