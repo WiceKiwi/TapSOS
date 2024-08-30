@@ -1,3 +1,39 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
 
-.env
+# C extensions
+*.so
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Ignore SQLite database
+db.sqlite3
+
+# Ignore all migrations directories
+**/migrations/
+
+# Ignore media/uploads directory (if applicable)
+media/
+
+# Ignore virtual environments
+env/
+venv/
+.myenv/
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore PyCharm settings
+.idea/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
