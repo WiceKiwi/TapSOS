@@ -1,26 +1,52 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import HomePage from './pages/HomePage';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { SafeAreaView, Image } from "react-native";
 
-export default function App() {
+import NaviBar from "./components/NaviBar";
+import { View } from "react-native";
+
+const Stack = createNativeStackNavigator();
+
+const App = () => {
   return (
-    <>
-      <HomePage></HomePage>
-      {/* <View style={styles.container}>
-      
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-      </View> */}
-    </>
-    
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerTitleAlign: 'center',
+            headerTitle: () => (
+              <View style={{ width: 120, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Image 
+                  source={require('./assets/LogoFix.png')} 
+                  style={{ width: '100%', height: '100%' }} 
+                  resizeMode="contain" 
+                />
+              </View>
+            ),
+            headerRight: () => (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+               
+              </View>
+            ),
+            headerStyle: {
+              height: 50,
+            },
+            headerBackground: () => (
+              <View>
+              </View>
+              
+            ),
+          }}>
+        <Stack.Screen
+          name="NaviBar"
+          component={NaviBar}
+        />
+        <Stack.Screen
+            name="Generated"
+            component={NaviBar}
+        />
+        </Stack.Navigator>
+      </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

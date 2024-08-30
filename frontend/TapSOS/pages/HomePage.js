@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, ScrollView  } from 'react-native';
 import * as Font from 'expo-font';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const PersonalInformation = ({userInfo}) => {
     return(
         <View style={styles.section}>
             <Text style={styles.header}>Personal Information</Text>
-            <View>
+            <View style={styles.infoCard}>
                 <View style={styles.infoRow}>
                     <View style={styles.info}>
                         <Text style={styles.label}>Name: </Text>
@@ -107,6 +108,7 @@ const EmergencyCard = ({emergencyCards}) => {
 }
 
 export default function HomePage() {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     const [fontsLoaded, setFontsLoaded] = useState(false);
 
     // Load the custom fonts
@@ -170,11 +172,8 @@ export default function HomePage() {
 const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
-      padding: 20,
-      marginVertical: 60,
-      marginHorizontal: 20,
-
-    //   backgroundColor: '#FEE2E2', // Background similar to the gradient
+      padding: 40,
+      backgroundColor: 'white', // Background similar to the gradient
     },
     section: {
         marginBottom: 30,
@@ -189,6 +188,14 @@ const styles = StyleSheet.create({
     info: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+
+    infoCard: {
+        borderRadius: 15,
+        backgroundColor: '#F89797',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        
     },
 
     infoRow: {
