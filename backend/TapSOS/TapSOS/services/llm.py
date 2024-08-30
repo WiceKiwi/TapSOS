@@ -39,10 +39,10 @@ class LLMService:
 
         generated_card = response.choices[0].message.content
 
-        print(generated_card)
+        # print(generated_card)
         return generated_card
 
 if __name__ == "__main__":
     llm_service = LLMService(api_key=OPENAI_API_KEY)
     # EXAMPLE ONLY
-    result = llm_service.generate_card("medical conditions: Mutism. Allergies: peanuts. Emergency contact number: 85135459") 
+    # result = llm_service.generate_card("medical conditions: Mutism. Allergies: peanuts. Emergency contact number: 85135459") 
