@@ -1,3 +1,4 @@
+# SQLite3 version 3.37.2
 Django==5.1
 python-dotenv==1.0.1
 pytest==8.2.2
