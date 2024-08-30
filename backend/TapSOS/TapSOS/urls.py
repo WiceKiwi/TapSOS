@@ -21,9 +21,10 @@ from django.contrib import admin
 from django.urls import path
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
-    path('user/<int:user_id>/', UserView.as_view()),
-    path('user/', UserView.as_view()),
-    path('emergency-card/<int:card_id>/', EmergencyCardView.as_view()),
-    path('emergency-card/', EmergencyCardView.as_view()),
+    path('users/', UserView.as_view(), name='user-create'),  # For POST requests to create a new user
+    path('users/<int:pk>/', UserView.as_view(), name='user-update'),  # For PUT requests to update an existing user
+    path('emergency-cards/', EmergencyCardView.as_view(), name='emergency-card-list-create'),  # For GET requests to list all cards and POST to create a new card
+    path('emergency-cards/<int:pk>/', EmergencyCardView.as_view(), name='emergency-card-update-delete'),  # For PUT requests to update and DELETE requests to delete a card by ID
 ]
