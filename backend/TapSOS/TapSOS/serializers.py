@@ -70,7 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
 class EmergencyCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmergencyCard
-        fields = ['user', 'title', 'content', 'source', 'created_at', 'updated_at']
+        fields = ['title', 'content', 'source', 'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at']
 
     def validate_title(self, value):
