@@ -7,7 +7,6 @@ project_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(project_dir)
 
 from openai import OpenAI
-from config.env import OPENAI_API_KEY
 
 class LLMService:
     def __init__(self, api_key):
@@ -25,7 +24,7 @@ class LLMService:
         return response
 
     def generate_card(self, input_data):
-        # edit instructions
+
         openai_instructions_card_generation = '''
         Purpose: Create emergency cards for non-verbal individuals (PWD) to communicate vital information quickly.
         Input: Personal details, including medical conditions and allergies.
@@ -40,19 +39,8 @@ class LLMService:
         Based on the context, specify the appropriate emergency number in Singapore.
         '''
 
-        # if isinstance(input_data, dict):
-        #     input_text = json.dumps(input_data)
-        # else:
-        #     input_text = str(input_data)
-
         response = self.get_llm_response(openai_instructions_card_generation, input_data)
 
         generated_card = response.choices[0].message.content
         # print(generated_card)
         return generated_card
-
-if __name__ == "__main__":
-    llm_service = LLMService(OPENAI_API_KEY)
-
-    res_card = llm_service.generate_content_based_on_title("medical conditions: mutism. allergies: peanut allergies")
-    print(res_card)
