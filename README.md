@@ -28,15 +28,32 @@ Connect your laptop to your mobile device's hotspot and check the IP address usi
    conda create --name <env_name> python=3.11
 2. pip install -r requirements.txt
 3. backend:
-   3.1. Find your ip address by doing ipconfig
-   3.2. Change the ALLOWED_HOSTS = ['INSERT_IP_ADDRESS_HERE'] in backend/TapSOS/TapSOS/settings.py
-   3.3. Add the ip address line to runserver.bat in the last line, so it looks like:
-   "python manage.py runserver IP_ADDRESS_HERE"
-   
-   After that, run the .bat file
-    ```bash
-    
-    runserver.bat
+   1. **Find Your IP Address**
+   - Open your terminal and run the following command:
+     ```bash
+     ipconfig
+     ```
+
+   2. **Update ALLOWED_HOSTS**
+   - Open the `backend/TapSOS/TapSOS/settings.py` file.
+   - Locate the `ALLOWED_HOSTS` setting.
+   - Replace `'INSERT_IP_ADDRESS_HERE'` with your IP address:
+     ```python
+     ALLOWED_HOSTS = ['YOUR_IP_ADDRESS']
+     ```
+
+   3. **Modify `runserver.bat`**
+   - Open the `runserver.bat` file.
+   - Add your IP address to the last line so that it looks like:
+     ```bash
+     python manage.py runserver YOUR_IP_ADDRESS
+     ```
+
+   4. **Run the `.bat` File**
+   - Execute the `.bat` file by running:
+     ```bash
+     runserver.bat
+     ```
 5. frontend: 
     ```bash
    cd frontend/TapSOS
