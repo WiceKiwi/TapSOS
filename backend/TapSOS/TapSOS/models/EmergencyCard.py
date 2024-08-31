@@ -5,6 +5,7 @@ class EmergencyCard(models.Model):
     
     title = models.CharField(max_length=100)
     content = models.TextField()
+    source = models.CharField(max_length=20, default='custom') #custom or emergency
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
