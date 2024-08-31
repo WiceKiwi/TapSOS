@@ -72,6 +72,31 @@ class UserView(APIView):
         # If the data is not valid, return errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def get(self, request, pk=None):
+        """
+        GET request to retrieve user data and associated emergency cards.
+        1. If pk is provided, retrieve the specific user and their emergency cards.
+        2. If no pk is provided, list all users with their basic information.
+        3. Return the user data with associated emergency cards in the response.
+        """
+        if pk:
+            # Step 2: Retrieve the specific user and their emergency cards
+            user = get_object_or_404(User, pk=pk)
+            serializer = UserSerializer(user)
+            emergency_cards = EmergencyCard.objects.filter(user=user)
+            card_serializer = EmergencyCardSerializer(emergency_cards, many=True)
+            
+            # Include emergency cards in the response
+            response_data = serializer.data
+            response_data['emergency_cards'] = card_serializer.data
+
+            return Response(response_data, status=status.HTTP_200_OK)
+        else:
+            # List all users with basic information
+            users = User.objects.all()
+            serializer = UserSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
 class EmergencyCardView(APIView):
     """
     Handles retrieving all emergency cards.
