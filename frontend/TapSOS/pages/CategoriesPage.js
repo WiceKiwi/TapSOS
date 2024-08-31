@@ -29,7 +29,6 @@ export default function CategoriesPage({route, navigation}){
 const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
-      paddingTop: 40,
       paddingHorizontal: 40,
       backgroundColor: 'white', // Background similar to the gradient
     },

@@ -2,44 +2,33 @@ import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from 'react-native';
 import * as Font from 'expo-font';
 import Card from '../components/Card';
-
-
-const CustomCard = ({customCards}) => {
-    return (
-        <View style={styles.section}>
-            <View style={styles.infoRow}>
-                <Text style={styles.header}>Custom Cards</Text>
-
-            </View>
-            
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.cardRow}
-            >
-                {customCards.map((card) => (
-                <Card card={card}></Card>
-                ))}
-            </ScrollView>
-                
-        </View>
-    )
-    
-}
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const Flag = ({status}) => {
     return (
         <View style={styles.flag}>
-            <Text style={styles.flagText}>Card created successfully!</Text>
+            <Text style={styles.flagText}>Changes saved successfully!</Text>
         </View>
     )
 }
 
-export default function EditCard({navigation}) {
+export default function EditCard({route, navigation}) {
     const [fontsLoaded, setFontsLoaded] = useState(false);
+    const {cardData} = route.params
     
-    const [newTitle, setNewTitle] = useState("");
-    const [newContent, setNewContent] = useState("");
+    const [newTitle, setNewTitle] = useState(cardData.title);
+    const [newContent, setNewContent] = useState(cardData.text);
+
+    useEffect(() => {
+        // Lock the orientation to landscape when this screen is mounted
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    
+        // Reset orientation to portrait when leaving this screen
+        return () => {
+          ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+        };
+      }, []);
+      
 
     // Load the custom fonts
     useEffect(() => {
@@ -65,15 +54,11 @@ export default function EditCard({navigation}) {
         console.log('New Title:', newTitle);
         console.log('New Content:', newContent);
       };
-
-    const customCards = [
-        { id: 1, title: 'Penicillin Allergic Reaction', backgroundColor: '#F89797' },
-        { id: 2, title: 'Peanuts Allergic Reaction', backgroundColor: '#FBCFCF' },
-        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA'  },
-
-      ];
-
-      
+    
+    const handleDelete = () => {
+        console.log('Deleted Title:', newTitle);
+        console.log('New Content:', newContent);
+      };
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
@@ -98,18 +83,27 @@ export default function EditCard({navigation}) {
                     <TextInput style={styles.textBoxLong} onChangeText={(text) => setNewContent(text)} 
                     value={newContent} 
                     placeholder="Enter your content here"
-                    textAlignVertical="top">
+                    textAlignVertical="top"
+                    multiline={true}>
                     </TextInput>
-                    <TouchableOpacity style={styles.button} onPress={handleCreate}>
-                        <Text style={styles.buttonText}>
-                            Create
-                        </Text>
-                    </TouchableOpacity>
+
+                    <View style={styles.cardRow}>
+                        <TouchableOpacity style={styles.button} onPress={handleDelete}>
+                            <Text style={styles.buttonText}>
+                                Delete
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.button} onPress={handleCreate}>
+                            <Text style={styles.buttonText}>
+                                Edit
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    
                 </View>
                 
             </View>
-            
-            <CustomCard customCards={customCards}></CustomCard>
         </ScrollView>
         
     )
@@ -158,7 +152,7 @@ const styles = StyleSheet.create({
     textBoxLong: {
         borderRadius: 15,
         backgroundColor: '#1111',
-        
+        flexWrap: 'wrap',
         fontSize: 14,
         fontFamily: 'Inter',
         paddingHorizontal: 10,
@@ -176,7 +170,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 5,
         width: 80,
-        marginLeft: 250,
     },
 
     buttonText:{
@@ -196,6 +189,7 @@ const styles = StyleSheet.create({
     cardRow: {
       flexDirection: 'row',
       marginBottom: 10,
+      justifyContent: 'space-between',
     },
 
     card: {

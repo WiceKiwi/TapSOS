@@ -102,14 +102,18 @@ const styles = StyleSheet.create({
       marginRight: 10,
       justifyContent: 'left',
       alignItems: 'baseline',
-      height: 200,
-      width: 200,
+      minHeight: 150,
+      minWidth: 150,
+      maxHeight: 150,
+      maxWidth: 150,
+      marginBottom: 10,
       backgroundColor: '#F89797',
       borderRadius: 15,
+      
     },
     
     cardText: {
-        fontSize: 16,
+        fontSize: 18,
         textAlign: 'left',
         fontFamily: 'Inter-bold',
         marginBottom: 10,

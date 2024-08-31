@@ -97,7 +97,8 @@ export default function NewCard({navigation}) {
                     <TextInput style={styles.textBoxLong} onChangeText={(text) => setNewContent(text)} 
                     value={newContent} 
                     placeholder="Enter your content here"
-                    textAlignVertical="top">
+                    textAlignVertical="top"
+                    multiline={true}>
                     </TextInput>
                     <TouchableOpacity style={styles.button} onPress={handleCreate}>
                         <Text style={styles.buttonText}>

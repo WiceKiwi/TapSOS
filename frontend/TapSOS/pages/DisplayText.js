@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Touchable, Button  } from 'react-native';
 import * as Font from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const SGLanguages = [
     {
@@ -33,7 +34,10 @@ const TranslateButton = ({language}) => {
 
 
 export default function DisplayText({route, navigation}) {
+    const [selectedLanguage, setLanguage] = useState('English')
     const { cardData } = route.params;
+    // const navigation = useNavigation();
+
     useEffect(() => {
         // Lock the orientation to landscape when this screen is mounted
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
@@ -64,22 +68,22 @@ export default function DisplayText({route, navigation}) {
         return null; // Alternatively, you can return a simple loading view here
     }
 
-    const customCards = [
-        { id: 1, title: 'Penicillin Allergic Reaction', backgroundColor: '#F89797' },
-        { id: 2, title: 'Peanuts Allergic Reaction', backgroundColor: '#FBCFCF' },
-        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA'  },
-
-      ];
-
     return(
             <ScrollView contentContainerStyle={styles.container}>
 
                 <Text style={styles.textBig}>{cardData.text}</Text>
-                <View style={styles.cardRow}>
-                    {SGLanguages.map((language)=> (
-                        <TranslateButton language={language} ></TranslateButton>
-                    ))}
+                <View style={styles.row}>
+                    <View style={styles.cardRow}>
+                        {SGLanguages.map((language)=> (
+                            <TranslateButton language={language} ></TranslateButton>
+                        ))}
+                    </View>
+                    <TouchableOpacity style={styles.editButton} >
+                        <Ionicons name="pencil-outline" size={20} onPress={() => navigation.navigate('EditCard', { cardData: cardData })}/>
+                    </TouchableOpacity>
+
                 </View>
+                
             </ScrollView>
         
         
@@ -90,6 +94,7 @@ export default function DisplayText({route, navigation}) {
 const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
+      paddingTop: 10,
       paddingHorizontal: 20,
       backgroundColor: 'white', // Background similar to the gradient
     },
@@ -101,6 +106,14 @@ const styles = StyleSheet.create({
 
     translateButton: {
         backgroundColor: '#1111',
+        padding: 10,
+        borderRadius: 15,
+        textAlign: 'center',
+        marginRight: 10,
+    },
+
+    selectedTranslateButton: {
+        backgroundColor: '#F89797',
         padding: 10,
         borderRadius: 15,
         textAlign: 'center',
@@ -150,6 +163,14 @@ const styles = StyleSheet.create({
         marginLeft: 250,
     },
 
+    editButton:{
+        alignItems: 'center',
+        paddingTop: 15,
+        borderRadius: 50,
+        backgroundColor: '#1111',
+        paddingHorizontal: 15,
+    },
+
     buttonText:{
         fontSize: 14,
         fontFamily: 'Inter-bold',
@@ -169,4 +190,9 @@ const styles = StyleSheet.create({
       marginBottom: 10,
       marginLeft: 20,
     },
+
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      },
   });

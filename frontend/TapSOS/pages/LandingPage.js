@@ -3,10 +3,10 @@ import { View, Image, Animated, StyleSheet, TouchableOpacity, Text } from 'react
 import * as Font from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
 
-export default function LandingPage({navigator}){
+export default function LandingPage({navigation}){
     const scaleValue = useRef(new Animated.Value(1)).current;
     const [fontsLoaded, setFontsLoaded] = useState(false);
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
 
     // Load the custom fonts
     useEffect(() => {

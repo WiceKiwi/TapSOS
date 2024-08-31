@@ -114,16 +114,14 @@ export default function HomePage({navigation}) {
 const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
-      paddingTop: 40,
       paddingHorizontal: 40,
       backgroundColor: 'white', // Background similar to the gradient
     },
 
     cardRow: {
+        marginBottom: 10,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        marginBottom: 10,
     },
 
     section: {

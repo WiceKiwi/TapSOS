@@ -12,6 +12,7 @@ import NewUserPage from "./pages/LandingPage";
 import LandingPage from "./pages/LandingPage";
 import SignUpPage from "./pages/SignUpPage";
 import AccountCreation from "./pages/AccountCreationPage";
+import EditCard from "./pages/EditCard";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
+            navigationBarHidden: false,
             headerTitleAlign: 'center',
             headerTitle: () => (
               <View style={{ width: 120, height: 40, justifyContent: 'center', alignItems: 'center' }}>
@@ -51,10 +53,12 @@ const App = () => {
         <Stack.Screen
             name="Display"
             component={DisplayText}
+            options={{ headerShown: true, navigationBarHidden: true}}
         />
         <Stack.Screen
             name="Profile"
             component={ProfilePage}
+            options={{ headerShown: true, navigationBarHidden: false}}
         />
         <Stack.Screen
             name="Home"
@@ -64,6 +68,7 @@ const App = () => {
         <Stack.Screen
             name="Category"
             component={CategoriesPage}
+            options={{ headerShown: true, navigationBarHidden: false}}
         />
         <Stack.Screen
             name="Landing"
@@ -79,6 +84,11 @@ const App = () => {
             name="AccountCreation"
             component={AccountCreation}
             options={{ headerShown: false}}
+        />
+        <Stack.Screen
+            name="EditCard"
+            component={EditCard}
+            options={{ headerShown: true, navigationBarHidden: false}}
         />
         </Stack.Navigator>
       </NavigationContainer>
