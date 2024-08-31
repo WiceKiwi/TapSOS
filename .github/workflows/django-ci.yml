@@ -22,10 +22,10 @@ jobs:
     - uses: docker/setup-buildx-action@v2
 
     - name: Build docker image
-    - run: docker build -t TapSOS-app .
+    - run: docker build -t tapsos-app .
 
     - name: Run docker container for tests
-    - run: docker run TapSOS-app python backend/TapSOS/manage.py test
+    - run: docker run tapsos-app python backend/TapSOS/manage.py test
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
