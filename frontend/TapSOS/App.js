@@ -13,6 +13,7 @@ import LandingPage from "./pages/LandingPage";
 import SignUpPage from "./pages/SignUpPage";
 import AccountCreation from "./pages/AccountCreationPage";
 import EditCard from "./pages/EditCard";
+import EditProfilePage from "./pages/EditProfilePage";
 
 const Stack = createNativeStackNavigator();
 
@@ -88,6 +89,11 @@ const App = () => {
         <Stack.Screen
             name="EditCard"
             component={EditCard}
+            options={{ headerShown: true, navigationBarHidden: false}}
+        />
+        <Stack.Screen
+            name="EditProfile"
+            component={EditProfilePage}
             options={{ headerShown: true, navigationBarHidden: false}}
         />
         </Stack.Navigator>

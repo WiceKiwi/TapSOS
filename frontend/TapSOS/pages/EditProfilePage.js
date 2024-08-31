@@ -28,11 +28,12 @@ const SignUpSchema = Yup.object().shape({
     bloodType: Yup.string().required('Blood type is required')
   });
 
-export default function SignUpPage() {
+export default function EditProfilePage({route, navigation}) {
+  const {userData} = route.params
+
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
-  const navigation = useNavigation();
 
   const onDateChange = (event, selectedDate) => {
     if (event.type === "set") { // This means the user pressed "OK"
@@ -47,25 +48,20 @@ export default function SignUpPage() {
     }
   };
 
-  const convertStringToArray = (inputString) => {
-    return inputString.split(',').map(item => item.trim());
-  };
-
-
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <Formik
         initialValues={{
-          name: '',
-          gender:'',
-          address: '',
-          bloodType:'',
-          medicalConditions: '',
-          allergies: [],
-          medications: [],
-          NOKName:'',
-          NOKNumber:'',
-          dateOfBirth: date,
+          name: userData.name,
+          gender: userData.gender,
+          address: userData.address,
+          bloodType: userData.bloodType,
+          medicalConditions: userData.medicalConditions,
+          allergies: userData.allergies,
+          medications: userData.medications,
+          NOKName:userData.NOKName,
+          NOKNumber:userData.NOKNumber,
+          dateOfBirth: userData.dateOfBirth,
         }}
         validationSchema={SignUpSchema}
         onSubmit={values => {
@@ -203,12 +199,9 @@ export default function SignUpPage() {
                 <TextInput
                 style={styles.textBoxLong}
                 placeholder="e.g. Peanuts, Penicillin, etc"
-                onChangeText={(text) => {
-                  const allergiesArray = convertStringToArray(text);
-                  setFieldValue('allergies', allergiesArray);
-                }}
+                onChangeText={handleChange('allergies')}
                 onBlur={handleBlur('allergies')}
-                value={values.allergies.join(', ')} // Convert back to string for display
+                value={values.allergies}
                 textAlignVertical='top'
                 />
                 {errors.allergies && touched.allergies ? (
@@ -221,12 +214,9 @@ export default function SignUpPage() {
                 <TextInput
                 style={styles.textBoxLong}
                 placeholder="e.g. Palforzia, etc"
-                onChangeText={(text) => {
-                  const medicationsArray = convertStringToArray(text);
-                  setFieldValue('medications', medicationsArray); // Assuming you are using Formik
-                }}
+                onChangeText={handleChange('medications')}
                 onBlur={handleBlur('medications')}
-                value={values.medications.join(', ')} // Convert back to string for display
+                value={values.medications}
                 textAlignVertical='top'
                 />
             </View>
@@ -262,8 +252,8 @@ export default function SignUpPage() {
             </View>
         
 
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Submit</Text>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Profile')}>
+                <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
           </View>
         )}

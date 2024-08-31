@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from 'react-native';
 import * as Font from 'expo-font';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const PersonalInformation = ({userInfo}) => {
     return(
@@ -47,7 +48,7 @@ const PersonalInformation = ({userInfo}) => {
 
                 <View style={styles.info}>
                     <Text style={styles.label}>NOK: </Text>
-                    <Text style={styles.value}>+65 {userInfo.emergencyContact.number} ({userInfo.emergencyContact.name})</Text>
+                    <Text style={styles.value}>+65 {userInfo.NOKNumber} ({userInfo.NOKName})</Text>
                 </View>
                 
                 
@@ -65,20 +66,26 @@ export default function ProfilePage({navigation}){
         age: 18,
         dob: "17/08/1945",
         gender: "Male",
-        medicalConditions: ["Mutism"],
+        medicalConditions: "Mutism",
         allergies: ["Penicillin", "Peanuts"],
         medications: ["Palforzia"],
         bloodType: "A-",
-        emergencyContact: {
-            number: 81234567,
-            name: "Dohn Joe"
-        }
+        NOKName: "Dohn Joe",
+        NOKNumber: "01234567",
+    }
+
+    const handleEdit = () => {
+        console.log("edited")
     }
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
             <PersonalInformation userInfo={userInfo}></PersonalInformation>
-
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EditProfile', {userData : userInfo})}>
+                <Text style={styles.buttonText}>
+                    Edit
+                </Text>
+            </TouchableOpacity>
         </ScrollView>
     )
 }
@@ -91,9 +98,18 @@ const styles = StyleSheet.create({
     },
 
     section: {
-        marginBottom: 30,
+        marginBottom: 10,
 
     },
+
+    editButton:{
+        alignItems: 'center',
+        paddingTop: 15,
+        borderRadius: 50,
+        backgroundColor: '#1111',
+        paddingHorizontal: 15,
+    },
+
     header: {
       fontSize: 22,
       fontFamily: 'Inter-bold',
@@ -118,11 +134,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter-bold',
     },
 
-    infoRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
     
     value: {
       fontSize: 16,
@@ -132,5 +143,21 @@ const styles = StyleSheet.create({
     label: {
       fontSize: 16,
       fontFamily: 'Inter',
+    },
+
+    button:{
+        marginTop: 10,
+        borderRadius: 15,
+        backgroundColor: '#F89797',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        width: 80,
+        marginLeft: 250,
+    },
+
+    buttonText:{
+        fontSize: 14,
+        fontFamily: 'Inter-bold',
+        textAlign: 'center',
     },
   });
