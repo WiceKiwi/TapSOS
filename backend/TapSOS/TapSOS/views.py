@@ -175,32 +175,3 @@ class EmergencyCardView(APIView):
         
         # Return a success response
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-
-# class AIEmergencyCardView(APIView):
-#     """
-#     Handles the creation of an emergency card based on an AI-generated response.
-#     """
-
-    # def get(self, request, emergency):
-    #     # Get the JSON string response from the AI model
-    #     llm_service = LLMService(OPENAI_API_KEY)
-            
-    #     response_json = llm_service.generate_card("emergency: " + str(emergency))
-
-#         # Create an emergency card using the service
-#         card = EmergencyCardService.create_emergency_card_with_keyword(response_json)
-        
-#         # Return the created card as a Response
-#         return Response({
-#             "status": "success",
-#             "message": "Emergency card created successfully.",
-#             "data": {
-#                 "id": card.id,
-#                 "title": card.title,
-#                 "content": card.content,
-#                 "created_at": card.created_at.isoformat(),
-#                 "updated_at": card.updated_at.isoformat()
-#             }
-#         }, status=201)
-    
