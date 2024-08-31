@@ -6,10 +6,13 @@ from TapSOS.serializers import UserSerializer, EmergencyCardSerializer  # Import
 from TapSOS.models.User import User
 from TapSOS.models.EmergencyCard import EmergencyCard
 from TapSOS.services.emergency_card_service import EmergencyCardService
+from TapSOS.services.llm_service import LLMService
+from config.env import OPENAI_API_KEY
 
 class UserView(APIView):
 
     def post(self, request):
+        
         """
         POST request to register a new user.
         1. Validate input data using the serializer.
@@ -24,9 +27,17 @@ class UserView(APIView):
             # Data is valid, proceed to save the user
             serializer.save()  # This calls the create() method of the serializer
             
-            response = # TODO: LLMService.generate_response(request.data)
+            # instantiate llm service
+            llm_service = LLMService(OPENAI_API_KEY)
+
+            # get response from llm in the form of json string, data won't be processed if not in the form of json string
+            response = llm_service.generate_card(input_data=request.data)
             
-            EmergencyCardService.create_emergency_card(response)
+            # TODO: generate user personalized card
+            EmergencyCardService.create_emergency_card_with_user(response)
+
+            # TODO: generate emergency cards
+            EmergencyCardService.create_emergency_card_with_keyword()
 
             # Step 4: Return Response
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -143,28 +154,30 @@ class EmergencyCardView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 
-class AIEmergencyCardView(APIView):
-    """
-    Handles the creation of an emergency card based on an AI-generated response.
-    """
+# class AIEmergencyCardView(APIView):
+#     """
+#     Handles the creation of an emergency card based on an AI-generated response.
+#     """
 
-    def get(self, request):
-        # Get the JSON string response from the AI model
-        response_json = LLMService.get_response(request)
+    # def get(self, request, emergency):
+    #     # Get the JSON string response from the AI model
+    #     llm_service = LLMService(OPENAI_API_KEY)
+            
+    #     response_json = llm_service.generate_card("emergency: " + str(emergency))
+
+#         # Create an emergency card using the service
+#         card = EmergencyCardService.create_emergency_card_with_keyword(response_json)
         
-        # Create an emergency card using the service
-        card = EmergencyCardService.create_emergency_card_with_keyword(response_json)
-        
-        # Return the created card as a Response
-        return Response({
-            "status": "success",
-            "message": "Emergency card created successfully.",
-            "data": {
-                "id": card.id,
-                "title": card.title,
-                "content": card.content,
-                "created_at": card.created_at.isoformat(),
-                "updated_at": card.updated_at.isoformat()
-            }
-        }, status=201)
+#         # Return the created card as a Response
+#         return Response({
+#             "status": "success",
+#             "message": "Emergency card created successfully.",
+#             "data": {
+#                 "id": card.id,
+#                 "title": card.title,
+#                 "content": card.content,
+#                 "created_at": card.created_at.isoformat(),
+#                 "updated_at": card.updated_at.isoformat()
+#             }
+#         }, status=201)
     
