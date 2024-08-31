@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from 'react-native';
 import * as Font from 'expo-font';
 import Card from '../components/Card';
+import axios from 'axios';
 
 const CustomCard = ({customCards}) => {
     return (
@@ -60,19 +61,30 @@ export default function NewCard({navigation}) {
         return null; // Alternatively, you can return a simple loading view here
     }
 
-    const handleCreate = () => {
-        console.log('New Title:', newTitle);
-        console.log('New Content:', newContent);
-      };
+    const handleCreate = async () => {
+        try {
+            console.log('New Title:', newTitle);
+            console.log('New Content:', newContent);
 
-    const customCards = [
-        { id: 1, title: 'Penicillin Allergic Reaction', backgroundColor: '#F89797' },
-        { id: 2, title: 'Peanuts Allergic Reaction', backgroundColor: '#FBCFCF' },
-        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA'  },
+            const apiUrl = 'http://192.168.86.25:8000/emergency-cards/';  // Replace with your actual IP and endpoint
 
-      ];
+            const response = await axios.post(apiUrl, {
+                user: "John Doe",
+                title: newTitle,
+                content: newContent,
+                source: "custom",
+            });
 
-      
+            console.log('Response:', response.data);
+
+            // Clear the input fields
+            setNewTitle('');
+            setNewContent('');
+        } catch (error) {
+            console.error('Error creating card:', error);
+        }
+    };
+
 
     return(
         <ScrollView contentContainerStyle={styles.container}>

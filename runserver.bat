@@ -15,5 +15,5 @@ REM Run migrations
 python manage.py makemigrations TapSOS
 python manage.py migrate
 
-REM Start the development server
-python manage.py runserver
+REM Start the development server 
+python manage.py runserver 192.168.86.25:8000

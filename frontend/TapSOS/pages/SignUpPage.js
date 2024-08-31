@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const SignUpSchema = Yup.object().shape({
     name: Yup.string()
@@ -15,10 +16,6 @@ const SignUpSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(100, 'Too Long!')
     .required('Address is required'),
-    medicalConditions: Yup.string()
-    .min(2, 'Too Short!')
-    .max(100, 'Too Long!')
-    .required('Medical Condition is required'),
     gender: Yup.string().required('Gender is required'),  // Dropdown field
     dateOfBirth: Yup.date().required('Date of birth is required'),  // Date picker field
     NOKName: Yup.string().required('NOK name is required'),
@@ -35,21 +32,40 @@ export default function SignUpPage() {
   const navigation = useNavigation();
 
   const onDateChange = (event, selectedDate) => {
-    if (event.type === "set") { // This means the user pressed "OK"
+    if (event.type === "set") { // User pressed "OK"
       setShowDatePicker(false);
       if (selectedDate) {
         setDate(selectedDate);
-        const formatted = `${selectedDate.getDate().toString().padStart(2, '0')}/${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}/${selectedDate.getFullYear()}`;
+        // Format the date as yyyy-mm-dd
+        const formatted = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${selectedDate.getDate().toString().padStart(2, '0')}`;
         setFormattedDate(formatted);
+        setFieldValue('dateOfBirth', formatted); // Save the formatted date in Formik
       }
     } else {
       setShowDatePicker(false); // User pressed "Cancel"
     }
-  };
+  };  
+  
 
   const convertStringToArray = (inputString) => {
     return inputString.split(',').map(item => item.trim());
   };
+
+  function calculateAge(dob) {
+    const birthDate = new Date(dob);
+    const ageDifMs = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageDifMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+function formatDate(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+  
 
 
   return (
@@ -57,21 +73,45 @@ export default function SignUpPage() {
       <Formik
         initialValues={{
           name: '',
-          gender:'',
+          gender: '',
           address: '',
-          bloodType:'',
-          medicalConditions: '',
+          bloodType: '',
+          medicalConditions: [],
           allergies: [],
           medications: [],
-          NOKName:'',
-          NOKNumber:'',
+          NOKName: '',
+          NOKNumber: '',
           dateOfBirth: date,
         }}
         validationSchema={SignUpSchema}
         onSubmit={values => {
-          // Handle form submission
-          console.log(values);
-          navigation.navigate('AccountCreation')
+          // Map Formik values to the required JSON structure
+          const formattedData = {
+            name: values.name,
+            age: calculateAge(values.dateOfBirth),  // Calculate the age based on the date of birth
+            gender: values.gender,
+            DOB: formatDate(values.dateOfBirth),  // Ensure the date is formatted as 'YYYY-MM-DD'
+            address: values.address,
+            medical_conditions: values.medicalConditions.map(condition => ({ condition })), // Map each condition correctly
+            allergies: values.allergies.map(allergen => ({ allergen })),  // Map each allergen correctly
+            blood_type: values.bloodType,
+            emergency_contact_number: values.NOKNumber,
+            emergency_contact_name: values.NOKName,
+            language_preference: "English",  // Replace this with dynamic value if needed
+        };
+
+          console.log(formattedData)
+
+          // Send `formattedData` to your API
+          axios.post('http://192.168.86.25:8000/users/', formattedData)
+            .then(response => {
+              console.log('Response:', response.data);
+              const cards = response.data
+              navigation.navigate('AccountCreation', { cards: cards});
+            })
+            .catch(error => {
+              console.error('Error submitting form:', error);
+            });
         }}
       >
         {({
@@ -111,15 +151,14 @@ export default function SignUpPage() {
                 </Text>
                 </TouchableOpacity>
                 {showDatePicker && (
-                <DateTimePicker
+                  <DateTimePicker
                     value={date}
                     mode="date"
                     display="default"
                     onChange={(event, selectedDate) => {
-                    onDateChange(event, selectedDate);
-                    setFieldValue('dateOfBirth', selectedDate);
+                      onDateChange(event, selectedDate);
                     }}
-                />
+                  />
                 )}
                 {errors.dateOfBirth && touched.dateOfBirth ? (
                 <Text style={styles.errorText}>{errors.dateOfBirth}</Text>
@@ -189,10 +228,12 @@ export default function SignUpPage() {
                 <TextInput
                 style={styles.textBoxShort}
                 placeholder="'Mutism'"
-                onChangeText={handleChange('medicalConditions')}
+                onChangeText={(text) => {
+                  const medicalConditionsArray = convertStringToArray(text);
+                  setFieldValue('medicalConditions', medicalConditionsArray);
+                }}
                 onBlur={handleBlur('medicalConditions')}
-                value={values.medicalConditions}
-                />
+                value={values.medicalConditions.join(', ')} />
                 {errors.medicalConditions && touched.medicalConditions ? (
                 <Text style={styles.errorText}>{errors.medicalConditions}</Text>
                 ) : null}

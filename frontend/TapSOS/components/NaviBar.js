@@ -31,7 +31,7 @@ export default function NaviBar() {
             ),
         }}/>
       <Tab.Screen
-        name="Upload"
+        name="Create"
         component={NewCard}
         options={{
             tabBarIcon: ({color, size }) => (

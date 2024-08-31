@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { Text, View, StyleSheet, ScrollView, Touchable, TouchableOpacity  } from 'react-native';
 import * as Font from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -6,7 +6,8 @@ import Card from '../components/Card';
 import { useNavigation } from '@react-navigation/native';
 import CategoriesPage from './CategoriesPage';
 import ParentCategoryCard from '../components/ParentCategoryCard';
-
+import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CustomCard = ({customCards}) => {
     return (
@@ -48,9 +49,42 @@ const EmergencyCard = ({emergencyCards}) => {
     
 }
 
+function transformCardData(apiData) {
+    const backgroundColors = [
+        '#F89797', '#FBCFCF', '#FCDADA', '#FFF076', '#A5D8FF', '#FFC1E3', '#F0D9FF'
+    ];
+
+    const customCards = apiData.map((item, index) => ({
+        id: index + 1,
+        title: item.title,
+        backgroundColor: backgroundColors[index % backgroundColors.length], // Cycle through background colors
+        text: item.content,
+    }));
+
+    return customCards;
+}
+
 export default function HomePage({navigation}) {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     const [fontsLoaded, setFontsLoaded] = useState(false);
+    const [cards, setCards] = useState([]);  // State to store the cards
+
+    useFocusEffect(
+        useCallback(() => {
+          const fetchCards = async () => {
+            try {
+              const response = await axios.get('http://192.168.86.25:8000/emergency-cards/');
+              setCards(transformCardData(response.data));
+              console.log(transformCardData(response.data));
+            } catch (error) {
+              console.error('Error fetching cards:', error);
+            }
+          };
+    
+          fetchCards();
+        }, [])
+      );
+
 
     // Load the custom fonts
     useEffect(() => {
@@ -70,28 +104,22 @@ export default function HomePage({navigation}) {
         return null; // Alternatively, you can return a simple loading view here
     }
 
-    const userInfo = {
-        name:"John Doe",
-        address:"123 School Street",
-        age: 18,
-        dob: "17/08/1945",
-        gender: "Male",
-        medicalConditions: ["Mutism"],
-        allergies: ["Penicillin", "Peanuts"],
-        medications: ["Palforzia"],
-        bloodType: "A-",
-        emergencyContact: {
-            number: 81234567,
-            name: "Dohn Joe"
-        }
-    }
+    // const userInfo = {
+    //     name:"John Doe",
+    //     address:"123 School Street",
+    //     age: 18,
+    //     dob: "17/08/1945",
+    //     gender: "Male",
+    //     medicalConditions: ["Mutism"],
+    //     allergies: ["Penicillin", "Peanuts"],
+    //     medications: ["Palforzia"],
+    //     bloodType: "A-",
+    //     emergencyContact: {
+    //         number: 81234567,
+    //         name: "Dohn Joe"
+    //     }
+    // }
 
-    const customCards = [
-        { id: 1, title: 'Penicillin Allergic Reaction', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE." },
-        { id: 2, title: 'Peanuts Allergic Reaction', backgroundColor: '#FBCFCF', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PEANUTS. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE." },
-        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA', text:"I AM MUTE. I AM MEWING RIGHT NOW. HELP!! CALL 999! CALL 995!"  },
-
-      ];
 
     const emergencyCards = [
         { id: 1, title: 'Medical Emergency', backgroundColor: '#FF6B6B', categories: [ {id: 1, title: 'Heart Attack', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}, {id: 2, title: 'Asthma', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}]},
@@ -103,7 +131,7 @@ export default function HomePage({navigation}) {
     return(
         <ScrollView contentContainerStyle={styles.container}>
             <EmergencyCard emergencyCards={emergencyCards}></EmergencyCard>
-            <CustomCard customCards={customCards}></CustomCard>
+            <CustomCard customCards={cards}></CustomCard>
             {/* <TouchableOpacity onPress={() => navigation.navigate('Landing')}><Text>LandingPage</Text></TouchableOpacity> */}
         </ScrollView>
         

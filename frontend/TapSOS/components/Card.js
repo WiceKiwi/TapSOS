@@ -4,6 +4,7 @@ import * as Font from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
 
 
+
 export default function Card({card}){
     const navigation = useNavigation();
     const [fontsLoaded, setFontsLoaded] = useState(false);
