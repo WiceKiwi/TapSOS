@@ -19,10 +19,10 @@ class UserView(APIView):
         2. Save the validated data via the serializer.
         3. Return a response indicating success or failure.
         """
-        # Step 2: Validate Input
+        # Validate Input
         serializer = UserSerializer(data=request.data)
         
-        # Step 3: Check if the data is valid
+        # Check if the data is valid
         if serializer.is_valid():
             # Data is valid, proceed to save the user
             serializer.save()  # This calls the create() method of the serializer
@@ -32,9 +32,10 @@ class UserView(APIView):
 
             # get response from llm in the form of json string, data won't be processed if not in the form of json string
             response = llm_service.generate_card(input_data=request.data)
-
-            # Create cards
             EmergencyCardService.create_emergency_card_with_user(response)
+
+            # TODO: generate emergency cards
+            EmergencyCardService.create_emergency_card_with_keyword()
 
             # Return Response
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -69,7 +70,7 @@ class UserView(APIView):
         # If the data is not valid, return errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def get(self, pk=None):
+    def get(self, request, pk=None):
         """
         GET request to retrieve user data and associated emergency cards.
         1. If pk is provided, retrieve the specific user and their emergency cards.
@@ -77,7 +78,7 @@ class UserView(APIView):
         3. Return the user data with associated emergency cards in the response.
         """
         if pk:
-            # Step 2: Retrieve the specific user and their emergency cards
+            # Retrieve the specific user and their emergency cards
             user = get_object_or_404(User, pk=pk)
             serializer = UserSerializer(user)
             emergency_cards = EmergencyCard.objects.filter(user=user)
@@ -99,20 +100,20 @@ class EmergencyCardView(APIView):
     Handles retrieving all emergency cards.
     """
 
-    def get(self):
+    def get(self, request):
         """
         GET request to retrieve all emergency cards.
         1. Retrieve all cards from the database.
         2. Serialize the data.
         3. Return the serialized data as JSON.
         """
-        # Step 2: Retrieve All Cards
+        # Retrieve All Cards
         cards = EmergencyCard.objects.all()
         
-        # Step 3: Serialize the Data
+        # Serialize the Data
         serializer = EmergencyCardSerializer(cards, many=True)
         
-        # Step 4: Return the Response
+        # Return the Response
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
@@ -122,14 +123,14 @@ class EmergencyCardView(APIView):
         2. Save the validated data to the database.
         3. Return a response indicating success or failure.
         """
-        # Step 2: Validate Input
+        # Validate Input
         serializer = EmergencyCardSerializer(data=request.data)
         
         if serializer.is_valid():
-            # Step 3: Save the validated data
+            # Save the validated data
             serializer.save()
             
-            # Step 4: Return a success response
+            # Return a success response
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         # If the data is not valid, return errors
@@ -146,20 +147,20 @@ class EmergencyCardView(APIView):
         # Retrieve the existing emergency card
         card = get_object_or_404(EmergencyCard, pk=pk)
         
-        # Validate Input
+        #  Validate Input
         serializer = EmergencyCardSerializer(card, data=request.data)
         
         if serializer.is_valid():
-            # Save the updated data
+            #  Save the updated data
             serializer.save()
             
-            # Return a success response
+            #  Return a success response
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         # If the data is not valid, return errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self, pk):
+    def delete(self, request, pk):
         """
         DELETE request to remove an emergency card.
         1. Retrieve the emergency card based on the provided ID.
@@ -174,3 +175,32 @@ class EmergencyCardView(APIView):
         
         # Return a success response
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+# class AIEmergencyCardView(APIView):
+#     """
+#     Handles the creation of an emergency card based on an AI-generated response.
+#     """
+
+    # def get(self, request, emergency):
+    #     # Get the JSON string response from the AI model
+    #     llm_service = LLMService(OPENAI_API_KEY)
+            
+    #     response_json = llm_service.generate_card("emergency: " + str(emergency))
+
+#         # Create an emergency card using the service
+#         card = EmergencyCardService.create_emergency_card_with_keyword(response_json)
+        
+#         # Return the created card as a Response
+#         return Response({
+#             "status": "success",
+#             "message": "Emergency card created successfully.",
+#             "data": {
+#                 "id": card.id,
+#                 "title": card.title,
+#                 "content": card.content,
+#                 "created_at": card.created_at.isoformat(),
+#                 "updated_at": card.updated_at.isoformat()
+#             }
+#         }, status=201)
+    
