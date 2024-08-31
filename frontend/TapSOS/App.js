@@ -21,6 +21,7 @@ const App = () => {
   return (
       <NavigationContainer>
         <Stack.Navigator
+          initialRouteName="Landing"
           screenOptions={{
             navigationBarHidden: false,
             headerTitleAlign: 'center',
@@ -48,7 +49,7 @@ const App = () => {
             ),
           }}>
         <Stack.Screen
-          name="NaviBar"
+          name="Main"
           component={NaviBar}
         />
         <Stack.Screen
@@ -74,27 +75,27 @@ const App = () => {
         <Stack.Screen
             name="Landing"
             component={LandingPage}
-            options={{ headerShown: false}}
+            options={{ headerShown: false, navigationBarHidden: true}}
         />
         <Stack.Screen
             name="SignUp"
             component={SignUpPage}
-            options={{ headerShown: true}}
+            options={{ headerShown: true, navigationBarHidden: true}}
         />
         <Stack.Screen
             name="AccountCreation"
             component={AccountCreation}
-            options={{ headerShown: false}}
+            options={{ headerShown: false, navigationBarHidden: true}}
         />
         <Stack.Screen
             name="EditCard"
             component={EditCard}
-            options={{ headerShown: true, navigationBarHidden: false}}
+            options={{ headerShown: true, navigationBarHidden: true}}
         />
         <Stack.Screen
             name="EditProfile"
             component={EditProfilePage}
-            options={{ headerShown: true, navigationBarHidden: false}}
+            options={{ headerShown: true, navigationBarHidden: true}}
         />
         </Stack.Navigator>
       </NavigationContainer>

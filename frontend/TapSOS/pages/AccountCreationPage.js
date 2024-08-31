@@ -40,7 +40,7 @@ export default function AccountCreation({navigator}){
             </View>
             
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main')}>
                 <Text style={styles.buttonText}>Get started</Text>
             </TouchableOpacity>
         </View>

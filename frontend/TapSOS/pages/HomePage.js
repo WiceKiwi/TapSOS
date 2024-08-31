@@ -104,7 +104,7 @@ export default function HomePage({navigation}) {
         <ScrollView contentContainerStyle={styles.container}>
             <EmergencyCard emergencyCards={emergencyCards}></EmergencyCard>
             <CustomCard customCards={customCards}></CustomCard>
-            <TouchableOpacity onPress={() => navigation.navigate('Landing')}><Text>LandingPage</Text></TouchableOpacity>
+            {/* <TouchableOpacity onPress={() => navigation.navigate('Landing')}><Text>LandingPage</Text></TouchableOpacity> */}
         </ScrollView>
         
     )
