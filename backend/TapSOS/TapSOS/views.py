@@ -155,7 +155,7 @@ class AIEmergencyCardView(APIView):
     def get(self, request, emergency):
         # Get the JSON string response from the AI model
         llm_service = LLMService(OPENAI_API_KEY)
-        
+            
         response_json = llm_service.generate_card("emergency: " + str(emergency))
 
         # Create an emergency card using the service
