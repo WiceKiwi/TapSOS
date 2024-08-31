@@ -25,17 +25,3 @@ jobs:
 
     - name: Run Docker Container for Tests
       run: docker run tapsos-app python backend/TapSOS/manage.py test
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Run Tests
-      run: |
-        python backend/TapSOS/manage.py test
