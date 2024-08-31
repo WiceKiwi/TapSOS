@@ -7,10 +7,18 @@ class MedicalConditionSerializer(serializers.ModelSerializer):
         model = MedicalCondition
         fields = ['condition']
 
+    def to_internal_value(self, data):
+        condition, created = MedicalCondition.objects.get_or_create(condition=data['condition'])
+        return condition
+
 class AllergySerializer(serializers.ModelSerializer):
     class Meta:
         model = Allergy
         fields = ['allergen']
+
+    def to_internal_value(self, data):
+        allergen, created = Allergy.objects.get_or_create(allergen=data['allergen'])
+        return allergen
 
 class UserSerializer(serializers.ModelSerializer):
     medical_conditions = MedicalConditionSerializer(many=True)
@@ -26,24 +34,22 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        medical_conditions_data = validated_data.pop('medical_conditions')
-        allergies_data = validated_data.pop('allergies')
+        medical_conditions = validated_data.pop('medical_conditions')
+        allergies = validated_data.pop('allergies')
         user = User.objects.create(**validated_data)
         
-        for condition_data in medical_conditions_data:
-            condition, created = MedicalCondition.objects.get_or_create(condition=condition_data['condition'])
-            user.medical_conditions.add(condition)
-        
-        for allergy_data in allergies_data:
-            allergy, created = Allergy.objects.get_or_create(allergen=allergy_data['allergen'])
-            user.allergies.add(allergy)
+        # medical_conditions and allergies already contain instances, so no need to call get_or_create again
+        user.medical_conditions.set(medical_conditions)
+        user.allergies.set(allergies)
 
         return user
 
     def update(self, instance, validated_data):
-        medical_conditions_data = validated_data.pop('medical_conditions')
-        allergies_data = validated_data.pop('allergies')
+        # Pop the related medical_conditions and allergies data
+        medical_conditions_data = validated_data.pop('medical_conditions', [])
+        allergies_data = validated_data.pop('allergies', [])
 
+        # Update the basic fields
         instance.name = validated_data.get('name', instance.name)
         instance.age = validated_data.get('age', instance.age)
         instance.gender = validated_data.get('gender', instance.gender)
@@ -55,22 +61,30 @@ class UserSerializer(serializers.ModelSerializer):
         instance.language_preference = validated_data.get('language_preference', instance.language_preference)
         instance.save()
 
+        # Update medical conditions
         instance.medical_conditions.clear()
-        for condition_data in medical_conditions_data:
-            condition, created = MedicalCondition.objects.get_or_create(condition=condition_data['condition'])
-            instance.medical_conditions.add(condition)
+        for condition in medical_conditions_data:
+            if isinstance(condition, dict):
+                condition_instance, created = MedicalCondition.objects.get_or_create(condition=condition['condition'])
+            else:
+                condition_instance = condition
+            instance.medical_conditions.add(condition_instance)
 
+        # Update allergies
         instance.allergies.clear()
-        for allergy_data in allergies_data:
-            allergy, created = Allergy.objects.get_or_create(allergen=allergy_data['allergen'])
-            instance.allergies.add(allergy)
+        for allergy in allergies_data:
+            if isinstance(allergy, dict):
+                allergy_instance, created = Allergy.objects.get_or_create(allergen=allergy['allergen'])
+            else:
+                allergy_instance = allergy
+            instance.allergies.add(allergy_instance)
 
         return instance
 
 class EmergencyCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmergencyCard
-        fields = ['user', 'title', 'content', 'source', 'created_at', 'updated_at']
+        fields = ['title', 'content', 'source', 'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at']
 
     def validate_title(self, value):

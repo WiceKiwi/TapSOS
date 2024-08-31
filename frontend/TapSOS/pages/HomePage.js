@@ -1,77 +1,112 @@
-import React from 'react';
-import { Text, View, StyleSheet, ScrollView  } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { Text, View, StyleSheet, ScrollView, Touchable, TouchableOpacity  } from 'react-native';
+import * as Font from 'expo-font';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import Card from '../components/Card';
+import { useNavigation } from '@react-navigation/native';
+import CategoriesPage from './CategoriesPage';
+import ParentCategoryCard from '../components/ParentCategoryCard';
 
-const PersonalInformation = () => {
-    return(
-        <ScrollView contentContainerStyle={styles.container}>
-        {/* Personal Information Section */}
-        <View style={styles.section}>
-            <Text style={styles.header}>Personal Information</Text>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Name: </Text>
-                <Text style={styles.value}>John Doe</Text>
-                <Text style={styles.label}>Age: </Text>
-                <Text style={styles.value}>18</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Address: </Text>
-                <Text style={styles.value}>123 School Street</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Sex: </Text>
-                <Text style={styles.value}>M</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Medical Condition: </Text>
-                <Text style={styles.value}>Mutism</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Allergies: </Text>
-                <Text style={styles.value}>Penicillin, Peanuts</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.label}>Blood Type: </Text>
-                <Text style={styles.value}>A-</Text>
-            </View>
-        </View>
 
-        {/* Custom Cards Section */}
+const CustomCard = ({customCards}) => {
+    return (
         <View style={styles.section}>
-            <Text style={styles.header}>Custom Cards</Text>
-            <View style={styles.cardRow}>
-            <View style={[styles.card, { backgroundColor: '#FF6B6B' }]}>
-                <Text style={styles.cardText}>Penicillin Allergic Reaction</Text>
+            <View style={styles.infoRow}>
+                <Text style={styles.header}>Custom Cards</Text>
             </View>
-            <View style={[styles.card, { backgroundColor: '#FF6B6B' }]}>
-                <Text style={styles.cardText}>Peanuts Allergic Reaction</Text>
+            
+            <View
+                style={styles.cardRow}
+            >
+                {customCards.map((card) => (
+                    <Card card={card}>
+                    </Card>
+                ))}
             </View>
-            <View style={[styles.card, { backgroundColor: '#FFB6B9' }]}>
-                <Text style={styles.cardText}>Help finding wallet</Text>
-            </View>
-            </View>
+                
         </View>
-
-        {/* Emergency Section */}
-        <View style={styles.section}>
-            <Text style={styles.header}>Emergency</Text>
-            <View style={styles.cardRow}>
-            <View style={[styles.card, { backgroundColor: '#FF6B6B' }]}>
-                <Text style={styles.cardText}>Medical Emergency</Text>
-                {/* Add an icon here if needed */}
-            </View>
-            <View style={[styles.card, { backgroundColor: '#6BCBFF' }]}>
-                <Text style={styles.cardText}>Physical Danger</Text>
-                {/* Add an icon here if needed */}
-            </View>
-            </View>
-        </View>
-    </ScrollView>
     )
+    
 }
 
-export default function HomePage() {
+const EmergencyCard = ({emergencyCards}) => {
+    
+    return (
+        <View style={styles.section}>
+            <View style={styles.infoRow}>
+                <Text style={styles.header}>Emergency</Text>
+            </View>
+            
+            <View style={styles.cardRow}>
+                {emergencyCards.map((card) => (
+                <ParentCategoryCard card={card}></ParentCategoryCard>
+                ))}
+            </View>
+                
+        </View>
+    )
+    
+}
+
+export default function HomePage({navigation}) {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    const [fontsLoaded, setFontsLoaded] = useState(false);
+
+    // Load the custom fonts
+    useEffect(() => {
+        async function loadFonts() {
+        await Font.loadAsync({
+            'Inter': require('../assets/Inter-VariableFont_opsz,wght.ttf'),
+            'Inter-bold': require('../assets/Inter_24pt-Bold.ttf'),
+        });
+        setFontsLoaded(true); // Set fontsLoaded to true once fonts are loaded
+        }
+
+        loadFonts();
+    }, []);
+
+    // Render nothing until the fonts are loaded
+    if (!fontsLoaded) {
+        return null; // Alternatively, you can return a simple loading view here
+    }
+
+    const userInfo = {
+        name:"John Doe",
+        address:"123 School Street",
+        age: 18,
+        dob: "17/08/1945",
+        gender: "Male",
+        medicalConditions: ["Mutism"],
+        allergies: ["Penicillin", "Peanuts"],
+        medications: ["Palforzia"],
+        bloodType: "A-",
+        emergencyContact: {
+            number: 81234567,
+            name: "Dohn Joe"
+        }
+    }
+
+    const customCards = [
+        { id: 1, title: 'Penicillin Allergic Reaction', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE." },
+        { id: 2, title: 'Peanuts Allergic Reaction', backgroundColor: '#FBCFCF', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PEANUTS. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE." },
+        { id: 3, title: 'Help Finding Wallet', backgroundColor: '#FCDADA', text:"I AM MUTE. I AM MEWING RIGHT NOW. HELP!! CALL 999! CALL 995!"  },
+
+      ];
+
+    const emergencyCards = [
+        { id: 1, title: 'Medical Emergency', backgroundColor: '#FF6B6B', categories: [ {id: 1, title: 'Heart Attack', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}, {id: 2, title: 'Asthma', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}]},
+        { id: 2, title: 'Physical Danger', backgroundColor: '#CADAFF', categories: [{id: 1, title: 'Physical Assault', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}, {id: 2, title: 'Sexual Assault', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}]},
+        { id: 3, title: 'Fire Emergency', backgroundColor: '#FFF076'  },
+
+      ];
+
     return(
-        <PersonalInformation></PersonalInformation>
+        <ScrollView contentContainerStyle={styles.container}>
+            <EmergencyCard emergencyCards={emergencyCards}></EmergencyCard>
+            <CustomCard customCards={customCards}></CustomCard>
+            {/* <TouchableOpacity onPress={() => navigation.navigate('Landing')}><Text>LandingPage</Text></TouchableOpacity> */}
+        </ScrollView>
+        
     )
 
 }
@@ -79,52 +114,58 @@ export default function HomePage() {
 const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
-      padding: 20,
-      marginVertical: 60,
-      marginHorizontal: 20,
+      paddingHorizontal: 40,
+      backgroundColor: 'white', // Background similar to the gradient
+    },
 
-    //   backgroundColor: '#FEE2E2', // Background similar to the gradient
+    cardRow: {
+        marginBottom: 10,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
     },
+
     section: {
-        marginBottom: 20,
+        marginBottom: 30,
+
     },
+    
     header: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 10,
-    },
-    infoRow: {
-      flexDirection: 'row',
+      fontSize: 22,
+      fontFamily: 'Inter-bold',
       marginBottom: 5,
     },
-    value: {
-      fontSize: 16,
-      fontWeight: '600',
+
+    info: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
-    label: {
-      fontSize: 16,
-      fontWeight: '400',
-      color: 'black',
+
+    infoCard: {
+        borderRadius: 15,
+        backgroundColor: '#1111',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        
     },
-    spacer: {
-      marginLeft: 20,
+
+    cardHeader: {
+        fontSize: 22,
+        fontFamily: 'Inter-bold',
     },
-    cardRow: {
+
+    infoRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 10,
-    },
-    card: {
-      flex: 1,
-      padding: 15,
-      marginRight: 10,
-      borderRadius: 10,
-      justifyContent: 'center',
       alignItems: 'center',
     },
-    cardText: {
-      color: 'black',
-      fontWeight: '600',
-      textAlign: 'center',
+    
+    value: {
+      fontSize: 16,
+      fontFamily: 'Inter-bold',
+    },
+
+    label: {
+      fontSize: 16,
+      fontFamily: 'Inter',
     },
   });

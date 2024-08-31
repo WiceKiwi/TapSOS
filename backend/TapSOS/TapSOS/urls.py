@@ -1,6 +1,7 @@
 from django.urls import path
 from TapSOS.views import UserView, EmergencyCardView
 
+
 """
 URL configuration for TapSOS project.
 
@@ -18,13 +19,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
 
 urlpatterns = [
-
+    #Admin paths
     path('admin/', admin.site.urls),
+
+    # User paths
     path('users/', UserView.as_view(), name='user-create'),  # For POST requests to create a new user
-    path('users/<int:pk>/', UserView.as_view(), name='user-update'),  # For PUT requests to update an existing user
+    path('users/<int:pk>/', UserView.as_view(), name='user-update'),  # GET to retrieve a specific user, PUT to update a user by ID
+
+    # Emergency card paths
     path('emergency-cards/', EmergencyCardView.as_view(), name='emergency-card-list-create'),  # For GET requests to list all cards and POST to create a new card
     path('emergency-cards/<int:pk>/', EmergencyCardView.as_view(), name='emergency-card-update-delete'),  # For PUT requests to update and DELETE requests to delete a card by ID
+    # path('AI-emergency-cards/<str:emergency>/', AIEmergencyCardView.as_view(), name='AI-emergency-card-create'),
 ]
