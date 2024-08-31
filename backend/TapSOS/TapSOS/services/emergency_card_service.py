@@ -66,8 +66,4 @@ class EmergencyCardService:
                 content='im blind',
                 source='emergency'
             )
-    
-        
 
-           
-        
