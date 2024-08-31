@@ -21,17 +21,17 @@ TapSOS empowers vulnerable individuals in emergencies by providing an intuitive 
 - **AI-Powered Card Creation**: The app leverages AI to dynamically generate communication cards based on the user’s profile.
 
 ## Installation
+Connect your laptop to your mobile device's hotspot and check the IP address using ipconfig
 
 1. Create a virtual environment:
    ```bash
    conda create --name <env_name> python=3.11
 2. pip install -r requirements.txt
 3. backend:
-   Find your ip address by doing ipconfig
-   Change the ALLOWED_HOSTS = ['INSERT_IP_ADDRESS_HERE'] in backend/TapSOS/TapSOS/settings.py
-   Add the ip address line to runserver.bat in the last line
-   so it looks like:
-   python manage.py runserver IP_ADDRESS_HERE
+   3.1. Find your ip address by doing ipconfig
+   3.2. Change the ALLOWED_HOSTS = ['INSERT_IP_ADDRESS_HERE'] in backend/TapSOS/TapSOS/settings.py
+   3.3. Add the ip address line to runserver.bat in the last line, so it looks like:
+   "python manage.py runserver IP_ADDRESS_HERE"
    
    After that, run the .bat file
     ```bash
