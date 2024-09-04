@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from
 import * as Font from 'expo-font';
 import Card from '../components/Card';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import axios from 'axios';
 
 const Flag = ({status}) => {
     return (
@@ -28,6 +29,8 @@ export default function EditCard({route, navigation}) {
           ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
         };
       }, []);
+    
+    
       
 
     // Load the custom fonts
@@ -50,15 +53,55 @@ export default function EditCard({route, navigation}) {
         return null; // Alternatively, you can return a simple loading view here
     }
 
-    const handleCreate = () => {
-        console.log('New Title:', newTitle);
-        console.log('New Content:', newContent);
+    const handleDelete = async () => {
+        try {
+            console.log('New Title:', newTitle);
+            console.log('New Content:', newContent);
+
+            const apiUrl = 'http://192.168.86.25:8000/emergency-cards/2/';  // Replace with your actual IP and endpoint
+
+            const response = await axios.delete(apiUrl)
+            // const response = await axios.delete(apiUrl, {
+            //     user: "John Doe",
+            //     title: newTitle,
+            //     content: newContent,
+            //     source: "custom",
+            // });
+
+            console.log('Response:', response.data);
+
+            // Clear the input fields
+            setNewTitle('');
+            setNewContent('');
+        } catch (error) {
+            console.error('Error creating card:', error);
+        }
       };
     
-    const handleDelete = () => {
-        console.log('Deleted Title:', newTitle);
-        console.log('New Content:', newContent);
-      };
+    
+    const handleEdit = async () => {
+        try {
+            console.log('New Title:', newTitle);
+            console.log('New Content:', newContent);
+
+            const apiUrl = 'http://192.168.86.25:8000/emergency-cards/1/';  // Replace with your actual IP and endpoint
+
+            const response = await axios.put(apiUrl, {
+                user: "John Doe",
+                title: newTitle,
+                content: newContent,
+                source: "custom",
+            });
+
+            console.log('Response:', response.data);
+
+            // Clear the input fields
+            setNewTitle('');
+            setNewContent('');
+        } catch (error) {
+            console.error('Error creating card:', error);
+        }
+    };
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
@@ -94,7 +137,7 @@ export default function EditCard({route, navigation}) {
                             </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.button} onPress={handleCreate}>
+                        <TouchableOpacity style={styles.button} onPress={handleEdit}>
                             <Text style={styles.buttonText}>
                                 Edit
                             </Text>

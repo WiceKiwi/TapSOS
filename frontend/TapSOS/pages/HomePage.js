@@ -104,22 +104,6 @@ export default function HomePage({navigation}) {
         return null; // Alternatively, you can return a simple loading view here
     }
 
-    // const userInfo = {
-    //     name:"John Doe",
-    //     address:"123 School Street",
-    //     age: 18,
-    //     dob: "17/08/1945",
-    //     gender: "Male",
-    //     medicalConditions: ["Mutism"],
-    //     allergies: ["Penicillin", "Peanuts"],
-    //     medications: ["Palforzia"],
-    //     bloodType: "A-",
-    //     emergencyContact: {
-    //         number: 81234567,
-    //         name: "Dohn Joe"
-    //     }
-    // }
-
 
     const emergencyCards = [
         { id: 100, title: 'Medical Emergency', backgroundColor: '#FF6B6B', categories: [ {id: 1, title: 'Heart Attack', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}, {id: 2, title: 'Asthma', backgroundColor: '#F89797', text:"I AM MUTE. I AM HAVING AN ALLERGIC REACTION TO PENICILLIN. PLEASE CALL 995. YOU CAN FIND MY MEDICAL INFO HERE."}]},
