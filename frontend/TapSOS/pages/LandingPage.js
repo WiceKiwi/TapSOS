@@ -3,10 +3,10 @@ import { View, Image, Animated, StyleSheet, TouchableOpacity, Text } from 'react
 import * as Font from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
 
-export default function LandingPage({navigation}){
+export default function LandingPage({}){
     const scaleValue = useRef(new Animated.Value(1)).current;
     const [fontsLoaded, setFontsLoaded] = useState(false);
-    // const navigation = useNavigation();
+    const navigation = useNavigation();
 
     // Load the custom fonts
     useEffect(() => {
@@ -23,10 +23,8 @@ export default function LandingPage({navigation}){
 
     // Render nothing until the fonts are loaded
     if (!fontsLoaded) {
-        return null; // Alternatively, you can return a simple loading view here
+        return null; 
     }
-
-    
 
     return (
         <View style={styles.container}>
@@ -37,8 +35,7 @@ export default function LandingPage({navigation}){
             <View style={styles.section}>
               <Text style={styles.slogan}>One Tap,</Text>
               <Text style={styles.slogan}>One Life Saved</Text>
-            </View>
-            
+            </View> 
 
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUp')}>
                 <Text style={styles.buttonText}>Create an account</Text>

@@ -74,10 +74,13 @@ export default function HomePage({navigation}) {
           const fetchCards = async () => {
             try {
               const response = await axios.get('http://192.168.86.25:8000/emergency-cards/');
-              setCards(transformCardData(response.data));
+              
               console.log(transformCardData(response.data));
+              setCards(transformCardData(response.data));
+
             } catch (error) {
               console.error('Error fetching cards:', error);
+
             }
           };
     
@@ -101,7 +104,7 @@ export default function HomePage({navigation}) {
 
     // Render nothing until the fonts are loaded
     if (!fontsLoaded) {
-        return null; // Alternatively, you can return a simple loading view here
+        return null; 
     }
 
 
@@ -116,7 +119,6 @@ export default function HomePage({navigation}) {
         <ScrollView contentContainerStyle={styles.container}>
             <EmergencyCard emergencyCards={emergencyCards}></EmergencyCard>
             <CustomCard customCards={cards}></CustomCard>
-            {/* <TouchableOpacity onPress={() => navigation.navigate('Landing')}><Text>LandingPage</Text></TouchableOpacity> */}
         </ScrollView>
         
     )

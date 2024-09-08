@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from 'react-native';
 import * as Font from 'expo-font';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
+import { UserContext } from './UserContext';
 
 const PersonalInformation = ({userInfo}) => {
     return(
@@ -58,72 +59,12 @@ const PersonalInformation = ({userInfo}) => {
 }
 
 export default function ProfilePage({navigation}){
-
-    const [userInfo, setUserInfo] = useState({
-    name: "",
-    address: "",
-    age: 0,
-    dob: "",
-    gender: "",
-    medicalConditions: "",
-    allergies: [],
-    medications: [],
-    bloodType: "",
-    NOKName: "",
-    NOKNumber: "",
-  });
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get('http://192.168.86.25:8000/users/');  // Replace with your actual IP and endpoint
-
-        const userData = response.data[0];  // Assuming response data is an array with one user object
-
-        console.log('User Data:', userData);  // Log the user data to inspect it
-
-        // Safely extract the data from nested objects
-        const formattedUserInfo = {
-          name: userData.name,
-          address: userData.address,
-          age: userData.age,
-          dob: formatDate(userData.DOB),  // Format DOB from YYYY-MM-DD to DD/MM/YYYY
-          gender: userData.gender,
-          medicalConditions: userData.medical_conditions.map(cond => cond.condition).join(', '),  // Extract conditions and join them into a string
-          allergies: userData.allergies.map(allergen => allergen.allergen),  // Extract allergens into an array
-          medications: userData.medications ? userData.medications.map(med => med.medication || "") : [],  // Map medications if they exist
-          bloodType: userData.blood_type,
-          NOKName: userData.emergency_contact_name,
-          NOKNumber: userData.emergency_contact_number,
-        };
-
-        setUserInfo(formattedUserInfo);
-        console.log('Formatted User Info:', formattedUserInfo);  // For debugging
-
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
-    const handleEdit = () => {
-        console.log("edited")
-    }
+    const { user } = useContext(UserContext)
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
-            <PersonalInformation userInfo={userInfo}></PersonalInformation>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EditProfile', {userData : userInfo})}>
+            <PersonalInformation userInfo={user}></PersonalInformation>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EditProfile')}>
                 <Text style={styles.buttonText}>
                     Edit
                 </Text>

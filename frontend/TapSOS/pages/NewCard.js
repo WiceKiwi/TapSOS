@@ -1,37 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from 'react-native';
 import * as Font from 'expo-font';
-import Card from '../components/Card';
 import axios from 'axios';
+import { UserContext } from '../components/User';
 
-const CustomCard = ({customCards}) => {
-    return (
-        <View style={styles.section}>
-            <View style={styles.infoRow}>
-                <Text style={styles.header}>Custom Cards</Text>
-
-            </View>
-            
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.cardRow}
-            >
-                {customCards.map((card) => (
-                <Card card={card}></Card>
-                ))}
-            </ScrollView>
-                
-        </View>
-    )
-    
-}
-
-export default function NewCard({navigation}) {
+export default function NewCard({}) {
     const [fontsLoaded, setFontsLoaded] = useState(false);
     const [newTitle, setNewTitle] = useState("");
     const [newContent, setNewContent] = useState("");
     const [apiResponse, setApiResponse] = useState(null);
+    const { user } = useContext(UserContext)
 
     // Load the custom fonts
     useEffect(() => {
@@ -50,27 +28,21 @@ export default function NewCard({navigation}) {
 
     // Render nothing until the fonts are loaded
     if (!fontsLoaded) {
-        return null; // Alternatively, you can return a simple loading view here
+        return null; 
     }
 
     const handleCreate = async () => {
         try {
-            console.log('New Title:', newTitle);
-            console.log('New Content:', newContent);
-
-            const apiUrl = 'http://192.168.86.25:8000/emergency-cards/';  // Replace with your actual IP and endpoint
-
-            const response = await axios.post(apiUrl, {
-                user: "John Doe",
+            const response = await axios.post('http://192.168.86.25:8000/emergency-cards/', {
+                user: user.name,
                 title: newTitle,
                 content: newContent,
                 source: "custom",
             });
 
-            console.log('Response:', response.data);
-
-            // Clear the input fields
+            console.log('Card successfully created:', response.data);
             setApiResponse(true);
+
             setNewTitle('');
             setNewContent('');
 
@@ -79,7 +51,6 @@ export default function NewCard({navigation}) {
             setApiResponse(false)
         }
     };
-
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
@@ -94,8 +65,7 @@ export default function NewCard({navigation}) {
             </View>
             )}
 
-            <View>
-                
+            <View> 
                 <View style={styles.section}>
                     <Text style={styles.header}>Title</Text>
                     <TextInput style={styles.textBoxShort}   
@@ -105,8 +75,6 @@ export default function NewCard({navigation}) {
                     textAlignVertical="top">
 
                     </TextInput>
-
-
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.header}>Card Content</Text>
@@ -124,8 +92,6 @@ export default function NewCard({navigation}) {
                 </View>
                 
             </View>
-            
-            {/* <CustomCard customCards={customCards}></CustomCard> */}
         </ScrollView>
         
     )

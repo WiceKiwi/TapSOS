@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Platform, ScrollView, Touchable, TouchableOpacity } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
+import { UserContext } from '../components/User';
 
 const SignUpSchema = Yup.object().shape({
     name: Yup.string()
@@ -28,12 +29,33 @@ const SignUpSchema = Yup.object().shape({
     bloodType: Yup.string().required('Blood type is required')
   });
 
-export default function EditProfilePage({route, navigation}) {
-  const {userData} = route.params
+function convertStringToArray(inputString){
+    return inputString.split(',').map(item => item.trim());
+  };
 
+function calculateAge(dob) {
+    const birthDate = new Date(dob);
+    const ageDifMs = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageDifMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
+function formatDate(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+export default function EditProfilePage({}) {
+  const { user } = useContext(UserContext)
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
+  const [apiResponse, setApiResponse] = useState(null);
+
+  const navigation = useNavigation();
 
   const onDateChange = (event, selectedDate) => {
     if (event.type === "set") { // This means the user pressed "OK"
@@ -48,27 +70,52 @@ export default function EditProfilePage({route, navigation}) {
     }
   };
 
+  const handleSubmit =  async ({values}) => {
+    // Handle form submission
+    const formattedData = {
+      name: values.name,
+      age: calculateAge(values.dateOfBirth),  // Calculate the age based on the date of birth
+      gender: values.gender,
+      DOB: formatDate(values.dateOfBirth),  // Ensure the date is formatted as 'YYYY-MM-DD'
+      address: values.address,
+      medical_conditions: convertStringToArray(values.medicalConditions).map(condition => ({ condition })), // Map each condition correctly
+      allergies: convertStringToArray(values.allergies).map(allergen => ({ allergen })),  // Map each allergen correctly
+      blood_type: values.bloodType,
+      emergency_contact_number: values.NOKNumber,
+      emergency_contact_name: values.NOKName,
+      language_preference: "English",  // Replace this with dynamic value if needed
+    };
+
+    try{
+      const response = await axios.put('http://192.168.86.25:8000/users/', formattedData);
+      console.log('User profile updated succesfully:', response.data);
+
+      setApiResponse(true)
+      navigation.navigate('Profile');
+
+    } catch(error){
+      console.error('Error editing user profile:', error);
+      setApiResponse(false)
+    }
+  }
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <Formik
         initialValues={{
-          name: userData.name,
-          gender: userData.gender,
-          address: userData.address,
-          bloodType: userData.bloodType,
-          medicalConditions: userData.medicalConditions,
-          allergies: userData.allergies,
-          medications: userData.medications,
-          NOKName:userData.NOKName,
-          NOKNumber:userData.NOKNumber,
-          dateOfBirth: userData.dateOfBirth,
+          name: user.name,
+          gender: user.gender,
+          address: user.address,
+          bloodType: user.bloodType,
+          medicalConditions: user.medicalConditions,
+          allergies: user.allergies,
+          medications: user.medications,
+          NOKName:user.NOKName,
+          NOKNumber:user.NOKNumber,
+          dateOfBirth: user.dateOfBirth,
         }}
         validationSchema={SignUpSchema}
-        onSubmit={values => {
-          // Handle form submission
-          console.log(values);
-          navigation.navigate('AccountCreation')
-        }}
+        onSubmit={values => {handleSubmit(values)}}
       >
         {({
           handleChange,
@@ -258,6 +305,16 @@ export default function EditProfilePage({route, navigation}) {
           </View>
         )}
       </Formik>
+      {apiResponse && (
+        <View style={styles.flagTrue}>
+          <Text style={styles.flagText}>Card created successfully!</Text>
+        </View>
+      )}
+      {!apiResponse && (
+        <View style={styles.flagFalse}>
+          <Text style={styles.flagText}>Error in creating new card, try again later</Text>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -283,6 +340,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Inter-bold',
     textAlign: 'center',
+  },
+
+  flagTrue: {
+    padding: 10,
+    backgroundColor:'#C0FFBB',
+    borderRadius: 15,
+    marginBottom: 10,
+  },
+
+  flagFalse: {
+      padding: 10,
+      backgroundColor:'#FDBDC0',
+      borderRadius: 15,
+      marginBottom: 10,
+  },
+
+  flagText: {
+      fontSize: 14,
+      fontFamily: 'Inter-bold',
   },
 
   section: {

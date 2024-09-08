@@ -25,10 +25,30 @@ const SignUpSchema = Yup.object().shape({
     bloodType: Yup.string().required('Blood type is required')
   });
 
+function convertStringToArray(inputString) {
+  return inputString.split(',').map(item => item.trim());
+  };
+
+function calculateAge(dob) {
+    const birthDate = new Date(dob);
+    const ageDifMs = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageDifMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
+function formatDate(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
 export default function SignUpPage() {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
+  const [apiResponse, setApiResponse] = useState(null);
   const navigation = useNavigation();
 
   const onDateChange = (event, selectedDate) => {
@@ -45,29 +65,39 @@ export default function SignUpPage() {
       setShowDatePicker(false); // User pressed "Cancel"
     }
   };  
-  
 
-  const convertStringToArray = (inputString) => {
-    return inputString.split(',').map(item => item.trim());
+  const handleSubmit = async ({values}) => {
+    //Handle form submission
+    const formattedData = {
+      name: values.name,
+      age: calculateAge(values.dateOfBirth),  // Calculate the age based on the date of birth
+      gender: values.gender,
+      DOB: formatDate(values.dateOfBirth),  // Ensure the date is formatted as 'YYYY-MM-DD'
+      address: values.address,
+      medical_conditions: convertStringToArray(values.medicalConditions).map(condition => ({ condition })), // Map each condition correctly
+      allergies: convertStringToArray(values.allergies).map(allergen => ({ allergen })),  // Map each allergen correctly
+      blood_type: values.bloodType,
+      emergency_contact_number: values.NOKNumber,
+      emergency_contact_name: values.NOKName,
+      language_preference: "English",  // Replace this with dynamic value if needed
+    };
+
+    try{
+      const response = await axios.post('http://192.168.86.25:8000/users/', formattedData);
+      console.log('User profile created succesfully', response.data);
+
+      const cards = response.data
+      setApiResponse(true)
+      navigation.navigate('AccountCreation', { cards: cards});
+
+    } catch(error){
+      console.error('Error editing user profile:', error);
+      setApiResponse(false)
+    }
+
+
   };
-
-  function calculateAge(dob) {
-    const birthDate = new Date(dob);
-    const ageDifMs = Date.now() - birthDate.getTime();
-    const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
-
-function formatDate(date) {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
   
-
-
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <Formik
@@ -84,36 +114,7 @@ function formatDate(date) {
           dateOfBirth: date,
         }}
         validationSchema={SignUpSchema}
-        onSubmit={values => {
-          // Map Formik values to the required JSON structure
-          const formattedData = {
-            name: values.name,
-            age: calculateAge(values.dateOfBirth),  // Calculate the age based on the date of birth
-            gender: values.gender,
-            DOB: formatDate(values.dateOfBirth),  // Ensure the date is formatted as 'YYYY-MM-DD'
-            address: values.address,
-            medical_conditions: convertStringToArray(values.medicalConditions).map(condition => ({ condition })), // Map each condition correctly
-            allergies: convertStringToArray(values.allergies).map(allergen => ({ allergen })),  // Map each allergen correctly
-            blood_type: values.bloodType,
-            emergency_contact_number: values.NOKNumber,
-            emergency_contact_name: values.NOKName,
-            language_preference: "English",  // Replace this with dynamic value if needed
-        };
-
-          console.log(formattedData)
-          
-
-          // Send `formattedData` to your API
-          axios.post('http://192.168.86.25:8000/users/', formattedData)
-            .then(response => {
-              console.log('Response:', response.data);
-              const cards = response.data
-              navigation.navigate('AccountCreation', { cards: cards});
-            })
-            .catch(error => {
-              console.error('Error submitting form:', error);
-            });
-        }}
+        onSubmit={values => {handleSubmit(values)}}
       >
         {({
           handleChange,
@@ -229,9 +230,7 @@ function formatDate(date) {
                 <TextInput
                 style={styles.textBoxShort}
                 placeholder="'Mutism'"
-                onChangeText={(text) => {
-                  setFieldValue('medicalConditions', text);
-                }}
+                onChangeText={handleChange('medicalConditions')}
                 onBlur={handleBlur('medicalConditions')}
                 value={values.medicalConditions} />
                 {errors.medicalConditions && touched.medicalConditions ? (
@@ -244,9 +243,7 @@ function formatDate(date) {
                 <TextInput
                 style={styles.textBoxLong}
                 placeholder="e.g. Peanuts, Penicillin, etc"
-                onChangeText={(text) => {
-                  setFieldValue('allergies', text);
-                }}
+                onChangeText={handleChange('allergies')}
                 onBlur={handleBlur('allergies')}
                 value={values.allergies} 
                 textAlignVertical='top'
@@ -261,9 +258,7 @@ function formatDate(date) {
                 <TextInput
                 style={styles.textBoxLong}
                 placeholder="e.g. Palforzia, etc"
-                onChangeText={(text) => {
-                  setFieldValue('medications', text); 
-                }}
+                onChangeText={handleChange('medications')}
                 onBlur={handleBlur('medications')}
                 value={values.medications} 
                 textAlignVertical='top'
@@ -307,6 +302,16 @@ function formatDate(date) {
           </View>
         )}
       </Formik>
+      {apiResponse && (
+        <View style={styles.flagTrue}>
+          <Text style={styles.flagText}>Card created successfully!</Text>
+        </View>
+      )}
+      {!apiResponse && (
+        <View style={styles.flagFalse}>
+          <Text style={styles.flagText}>Error in creating new card, try again later</Text>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -332,6 +337,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Inter-bold',
     textAlign: 'center',
+  },
+
+  flagTrue: {
+    padding: 10,
+    backgroundColor:'#C0FFBB',
+    borderRadius: 15,
+    marginBottom: 10,
+  },
+
+  flagFalse: {
+      padding: 10,
+      backgroundColor:'#FDBDC0',
+      borderRadius: 15,
+      marginBottom: 10,
+  },
+
+  flagText: {
+      fontSize: 14,
+      fontFamily: 'Inter-bold',
   },
 
   section: {

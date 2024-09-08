@@ -1,24 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Text, View, StyleSheet, ScrollView, TextInput, TouchableOpacity  } from 'react-native';
 import * as Font from 'expo-font';
-import Card from '../components/Card';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import axios from 'axios';
-
-const Flag = ({status}) => {
-    return (
-        <View style={styles.flag}>
-            <Text style={styles.flagText}>Changes saved successfully!</Text>
-        </View>
-    )
-}
+import { UserContext } from '../components/User';
 
 export default function EditCard({route, navigation}) {
     const [fontsLoaded, setFontsLoaded] = useState(false);
     const {cardData} = route.params
-    
     const [newTitle, setNewTitle] = useState(cardData.title);
     const [newContent, setNewContent] = useState(cardData.text);
+    const [apiResponse, setApiResponse] = useState(null);
+    const { user } = useContext(UserContext)
 
     useEffect(() => {
         // Lock the orientation to landscape when this screen is mounted
@@ -30,9 +23,6 @@ export default function EditCard({route, navigation}) {
         };
       }, []);
     
-    
-      
-
     // Load the custom fonts
     useEffect(() => {
         async function loadFonts() {
@@ -50,65 +40,74 @@ export default function EditCard({route, navigation}) {
 
     // Render nothing until the fonts are loaded
     if (!fontsLoaded) {
-        return null; // Alternatively, you can return a simple loading view here
+        return null; 
     }
 
     const handleDelete = async () => {
         try {
-            console.log('New Title:', newTitle);
-            console.log('New Content:', newContent);
-
-            const apiUrl = 'http://192.168.86.25:8000/emergency-cards/2/';  // Replace with your actual IP and endpoint
-
-            const response = await axios.delete(apiUrl)
-            // const response = await axios.delete(apiUrl, {
-            //     user: "John Doe",
-            //     title: newTitle,
-            //     content: newContent,
-            //     source: "custom",
-            // });
+            const response = await axios.delete('http://192.168.86.25:8000/emergency-cards/2/')
 
             console.log('Response:', response.data);
+            setApiResponse('delete-success');
+
+            navigation.navigate('Home');
 
             // Clear the input fields
             setNewTitle('');
             setNewContent('');
+
         } catch (error) {
             console.error('Error creating card:', error);
+            setApiResponse('delete-error');
         }
       };
     
-    
     const handleEdit = async () => {
         try {
-            console.log('New Title:', newTitle);
-            console.log('New Content:', newContent);
-
-            const apiUrl = 'http://192.168.86.25:8000/emergency-cards/1/';  // Replace with your actual IP and endpoint
-
-            const response = await axios.put(apiUrl, {
-                user: "John Doe",
+            const response = await axios.put('http://192.168.86.25:8000/emergency-cards/1/', {
+                user: user.name,
                 title: newTitle,
                 content: newContent,
                 source: "custom",
             });
 
-            console.log('Response:', response.data);
+            console.log('Card successfully edited:', response.data);
+            setApiResponse('edit-success');
 
             // Clear the input fields
             setNewTitle('');
             setNewContent('');
+
         } catch (error) {
             console.error('Error creating card:', error);
+            setApiResponse('edit-error')
         }
     };
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
-            {/* <Flag></Flag> */}
+            {apiResponse === 'edit-success'&& (
+                <View style={styles.flagTrue}>
+                    <Text style={styles.flagText}>Card edited successfully!</Text>
+                </View>
+            )}
+            {apiResponse === 'delete-success'&& (
+                <View style={styles.flagTrue}>
+                    <Text style={styles.flagText}>Card deleted successfully!</Text>
+                </View>
+            )}
+            {apiResponse === 'edit-error' && (
+            <View style={styles.flagFalse}>
+                <Text style={styles.flagText}>Error in editing card, try again later</Text>
+            </View>
+            )}
+            {apiResponse === 'delete-error' && (
+            <View style={styles.flagFalse}>
+                <Text style={styles.flagText}>Error in deleting card, try again later</Text>
+            </View>
+            )}
 
             <View>
-                
                 <View style={styles.section}>
                     <Text style={styles.header}>Title</Text>
                     <TextInput style={styles.textBoxShort}   
@@ -118,8 +117,6 @@ export default function EditCard({route, navigation}) {
                     textAlignVertical="top">
 
                     </TextInput>
-
-
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.header}>Card Content</Text>
@@ -160,9 +157,16 @@ const styles = StyleSheet.create({
       backgroundColor: 'white', // Background similar to the gradient
     },
 
-    flag: {
+    flagTrue: {
         padding: 10,
         backgroundColor:'#C0FFBB',
+        borderRadius: 15,
+        marginBottom: 10,
+    },
+
+    flagFalse: {
+        padding: 10,
+        backgroundColor:'#FDBDC0',
         borderRadius: 15,
         marginBottom: 10,
     },

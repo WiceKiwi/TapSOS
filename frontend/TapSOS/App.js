@@ -8,17 +8,18 @@ import DisplayText from "./pages/DisplayText";
 import ProfilePage from "./pages/ProfilePage";
 import HomePage from "./pages/HomePage";
 import CategoriesPage from "./pages/CategoriesPage";
-import NewUserPage from "./pages/LandingPage";
 import LandingPage from "./pages/LandingPage";
 import SignUpPage from "./pages/SignUpPage";
 import AccountCreation from "./pages/AccountCreationPage";
 import EditCard from "./pages/EditCard";
 import EditProfilePage from "./pages/EditProfilePage";
+import { UserProvider } from "./components/User";
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
+    <UserProvider>
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Landing"
@@ -99,6 +100,7 @@ const App = () => {
         />
         </Stack.Navigator>
       </NavigationContainer>
+    </UserProvider>
   );
 };
 
