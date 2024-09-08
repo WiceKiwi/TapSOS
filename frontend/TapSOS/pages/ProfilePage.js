@@ -52,9 +52,6 @@ const PersonalInformation = ({userInfo}) => {
                     <Text style={styles.value}>+65 {userInfo.NOKNumber} ({userInfo.NOKName})</Text>
                 </View>
                 
-                
-         
-                
             </View>
         </View>
     )

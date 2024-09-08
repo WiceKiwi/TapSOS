@@ -27,19 +27,11 @@ const CustomCard = ({customCards}) => {
     
 }
 
-const Flag = ({status}) => {
-    return (
-        <View style={styles.flag}>
-            <Text style={styles.flagText}>Card created successfully!</Text>
-        </View>
-    )
-}
-
 export default function NewCard({navigation}) {
     const [fontsLoaded, setFontsLoaded] = useState(false);
-    
     const [newTitle, setNewTitle] = useState("");
     const [newContent, setNewContent] = useState("");
+    const [apiResponse, setApiResponse] = useState(null);
 
     // Load the custom fonts
     useEffect(() => {
@@ -78,17 +70,29 @@ export default function NewCard({navigation}) {
             console.log('Response:', response.data);
 
             // Clear the input fields
+            setApiResponse(true);
             setNewTitle('');
             setNewContent('');
+
         } catch (error) {
             console.error('Error creating card:', error);
+            setApiResponse(false)
         }
     };
 
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
-            {/* <Flag></Flag> */}
+            {apiResponse && (
+                <View style={styles.flagTrue}>
+                    <Text style={styles.flagText}>Card created successfully!</Text>
+                </View>
+            )}
+            {!apiResponse && (
+            <View style={styles.flagFalse}>
+                <Text style={styles.flagText}>Error in creating new card, try again later</Text>
+            </View>
+            )}
 
             <View>
                 
@@ -135,9 +139,16 @@ const styles = StyleSheet.create({
       backgroundColor: 'white', // Background similar to the gradient
     },
 
-    flag: {
+    flagTrue: {
         padding: 10,
         backgroundColor:'#C0FFBB',
+        borderRadius: 15,
+        marginBottom: 10,
+    },
+
+    flagFalse: {
+        padding: 10,
+        backgroundColor:'#FDBDC0',
         borderRadius: 15,
         marginBottom: 10,
     },
