@@ -76,9 +76,9 @@ function formatDate(date) {
           gender: '',
           address: '',
           bloodType: '',
-          medicalConditions: [],
-          allergies: [],
-          medications: [],
+          medicalConditions: '',
+          allergies: '',
+          medications: '',
           NOKName: '',
           NOKNumber: '',
           dateOfBirth: date,
@@ -92,8 +92,8 @@ function formatDate(date) {
             gender: values.gender,
             DOB: formatDate(values.dateOfBirth),  // Ensure the date is formatted as 'YYYY-MM-DD'
             address: values.address,
-            medical_conditions: values.medicalConditions.map(condition => ({ condition })), // Map each condition correctly
-            allergies: values.allergies.map(allergen => ({ allergen })),  // Map each allergen correctly
+            medical_conditions: convertStringToArray(values.medicalConditions).map(condition => ({ condition })), // Map each condition correctly
+            allergies: convertStringToArray(values.allergies).map(allergen => ({ allergen })),  // Map each allergen correctly
             blood_type: values.bloodType,
             emergency_contact_number: values.NOKNumber,
             emergency_contact_name: values.NOKName,
@@ -101,6 +101,7 @@ function formatDate(date) {
         };
 
           console.log(formattedData)
+          
 
           // Send `formattedData` to your API
           axios.post('http://192.168.86.25:8000/users/', formattedData)
@@ -229,11 +230,10 @@ function formatDate(date) {
                 style={styles.textBoxShort}
                 placeholder="'Mutism'"
                 onChangeText={(text) => {
-                  const medicalConditionsArray = convertStringToArray(text);
-                  setFieldValue('medicalConditions', medicalConditionsArray);
+                  setFieldValue('medicalConditions', text);
                 }}
                 onBlur={handleBlur('medicalConditions')}
-                value={values.medicalConditions.join(', ')} />
+                value={values.medicalConditions} />
                 {errors.medicalConditions && touched.medicalConditions ? (
                 <Text style={styles.errorText}>{errors.medicalConditions}</Text>
                 ) : null}
@@ -245,11 +245,10 @@ function formatDate(date) {
                 style={styles.textBoxLong}
                 placeholder="e.g. Peanuts, Penicillin, etc"
                 onChangeText={(text) => {
-                  const allergiesArray = convertStringToArray(text);
-                  setFieldValue('allergies', allergiesArray);
+                  setFieldValue('allergies', text);
                 }}
                 onBlur={handleBlur('allergies')}
-                value={values.allergies.join(', ')} // Convert back to string for display
+                value={values.allergies} 
                 textAlignVertical='top'
                 />
                 {errors.allergies && touched.allergies ? (
@@ -263,11 +262,10 @@ function formatDate(date) {
                 style={styles.textBoxLong}
                 placeholder="e.g. Palforzia, etc"
                 onChangeText={(text) => {
-                  const medicationsArray = convertStringToArray(text);
-                  setFieldValue('medications', medicationsArray); // Assuming you are using Formik
+                  setFieldValue('medications', text); 
                 }}
                 onBlur={handleBlur('medications')}
-                value={values.medications.join(', ')} // Convert back to string for display
+                value={values.medications} 
                 textAlignVertical='top'
                 />
             </View>
